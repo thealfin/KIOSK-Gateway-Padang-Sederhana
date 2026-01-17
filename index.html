@@ -1,0 +1,632 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restoran Sederhana - Kiosk</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+      background: #f5f5f5;
+      margin: 0
+    }
+
+    .kiosk {
+      max-width: 500px;
+      margin: 0 auto;
+      height: 100vh;
+      background: #fff;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.1)
+    }
+
+    .no-scroll::-webkit-scrollbar {
+      display: none
+    }
+
+    .no-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none
+    }
+
+    .gadang {
+      position: fixed;
+      width: 80px;
+      height: 80px;
+      opacity: 0.05;
+      pointer-events: none;
+      z-index: 1
+    }
+
+    .tl {
+      top: 10px;
+      left: 10px
+    }
+
+    .tr {
+      top: 10px;
+      right: 10px;
+      transform: scaleX(-1)
+    }
+
+    .bl {
+      bottom: 10px;
+      left: 10px;
+      transform: scaleY(-1)
+    }
+
+    .br {
+      bottom: 10px;
+      right: 10px;
+      transform: scale(-1)
+    }
+
+    .step {
+      display: none
+    }
+
+    .step.active {
+      display: flex
+    }
+
+    .slide {
+      animation: slideIn 0.4s ease-out
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1
+      }
+    }
+
+    @keyframes printAnim {
+      0% {
+        transform: translateY(-100%)
+      }
+
+      100% {
+        transform: translateY(0)
+      }
+    }
+
+    .print {
+      animation: printAnim 1.5s ease-out
+    }
+
+    /* Animated Checkmark */
+    @keyframes checkmark {
+      0% {
+        stroke-dashoffset: 100;
+      }
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes checkmarkCircle {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .checkmark-circle {
+      animation: checkmarkCircle 0.6s ease-out forwards;
+    }
+
+    .checkmark-check {
+      stroke-dasharray: 100;
+      stroke-dashoffset: 100;
+      animation: checkmark 0.8s 0.3s ease-out forwards;
+    }
+
+    /* Hover Effects */
+    .menu-item {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .menu-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      border-color: #ff6b35 !important;
+    }
+
+    .menu-item:active {
+      transform: translateY(-2px);
+    }
+
+    .btn-add {
+      transition: all 0.2s ease;
+    }
+
+    .btn-add:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+    }
+
+    .btn-add:active {
+      transform: scale(0.95);
+    }
+
+    .btn {
+      min-height: 60px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 16px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-back {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.05);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-back:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+
+<body>
+  <svg class="gadang tl" viewBox="0 0 100 100">
+    <path d="M0 100 L50 0 L100 100 Z" fill="currentColor" />
+  </svg>
+  <svg class="gadang tr" viewBox="0 0 100 100">
+    <path d="M0 100 L50 0 L100 100 Z" fill="currentColor" />
+  </svg>
+  <svg class="gadang bl" viewBox="0 0 100 100">
+    <path d="M0 100 L50 0 L100 100 Z" fill="currentColor" />
+  </svg>
+  <svg class="gadang br" viewBox="0 0 100 100">
+    <path d="M0 100 L50 0 L100 100 Z" fill="currentColor" />
+  </svg>
+
+  <div class="kiosk">
+    <section id="s1" class="step active flex-col items-center justify-center h-full text-center p-8">
+      <img src="https://restoransederhana.id/wp-content/uploads/2018/11/PTSA-LOGO-ADR-4.png" class="w-48 mb-8">
+      <h1 class="text-xl font-light text-gray-500 uppercase tracking-widest mb-12">Masakan Padang Asli</h1>
+      <button onclick="next(2)" class="btn bg-orange-500 text-white px-12 py-5 rounded-full shadow-2xl animate__animated animate__pulse animate__infinite">SENTUH UNTUK MEMULAI</button>
+    </section>
+
+    <section id="s2" class="step flex-col items-center justify-center h-full p-6 relative">
+      <div class="btn-back" onclick="next(1)">❮</div>
+      <h2 class="text-2xl font-bold mb-8">Pilih Jenis Pesanan</h2>
+      <div class="space-y-4 w-full">
+        <button onclick="setType('Dine In')" class="btn w-full bg-white border-2 border-gray-200 hover:border-orange-500 p-6 flex items-center gap-4">
+          <span class="text-5xl">🍽️</span>
+          <span class="text-xl font-bold">MAKAN DI SINI</span>
+        </button>
+        <button onclick="setType('Take Away')" class="btn w-full bg-white border-2 border-gray-200 hover:border-orange-500 p-6 flex items-center gap-4">
+          <span class="text-5xl">🛍️</span>
+          <span class="text-xl font-bold">BAWA PULANG</span>
+        </button>
+      </div>
+    </section>
+
+    <section id="s3" class="step flex-col items-center justify-center h-full p-6 relative">
+      <div class="btn-back" onclick="next(2)">❮</div>
+      <h2 class="text-2xl font-bold mb-8">Pilih Cara Pesan</h2>
+      <div class="space-y-4 w-full">
+        <button onclick="setPath('paket')" class="btn w-full bg-gradient-to-r from-orange-400 to-red-500 text-white p-8">
+          <div class="text-5xl mb-2">🎁</div>
+          <div class="text-xl font-bold">PAKET HEMAT</div>
+          <div class="text-sm opacity-90">Sudah termasuk nasi & minuman</div>
+        </button>
+        <button onclick="setPath('alacarte')" class="btn w-full bg-white border-2 border-gray-200 hover:border-orange-500 p-8">
+          <div class="text-5xl mb-2">🍴</div>
+          <div class="text-xl font-bold">ALA CARTE / PORSIAN</div>
+          <div class="text-sm text-gray-600">Pilih sendiri lauk, nasi & minuman</div>
+        </button>
+      </div>
+    </section>
+
+    <section id="s4" class="step flex-col h-full relative">
+      <div class="p-4 bg-orange-500 text-white text-center font-bold flex items-center">
+        <div class="w-8 h-8 flex items-center justify-center cursor-pointer mr-2" onclick="next(3)">❮</div>
+        <div class="flex-1 mr-8">Pilih Lauk Utama</div>
+      </div>
+      <div class="flex-1 overflow-y-auto no-scroll p-4 pb-24 space-y-3" id="lauk-list"></div>
+      <div id="lauk-float" class="hidden fixed bottom-0 left-0 right-0 bg-orange-500 text-white p-4 shadow-2xl" style="max-width:500px;margin:0 auto">
+        <div class="flex justify-between items-center">
+          <div>
+            <span class="text-sm">Total Item: </span>
+            <span class="font-bold text-lg" id="lauk-count">0</span>
+          </div>
+          <button onclick="proceedFromLauk()" class="bg-white text-orange-600 px-8 py-3 rounded-full font-bold">Lanjutkan</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="s5" class="step flex-col h-full relative">
+      <div class="p-4 bg-orange-500 text-white text-center font-bold flex items-center">
+        <div class="w-8 h-8 flex items-center justify-center cursor-pointer mr-2" onclick="next(3)">❮</div>
+        <div class="flex-1 mr-8" id="s5-title">Pilih Paket</div>
+      </div>
+      <div class="flex-1 overflow-y-auto no-scroll p-4 pb-24 space-y-3" id="bundle-list"></div>
+      <div id="bundle-float" class="hidden fixed bottom-0 left-0 right-0 bg-orange-500 text-white p-4 shadow-2xl" style="max-width:500px;margin:0 auto">
+        <div class="flex justify-between items-center">
+          <div>
+            <span class="text-sm">Total Item: </span>
+            <span class="font-bold text-lg" id="bundle-count">0</span>
+          </div>
+          <button onclick="proceedFromBundle()" class="bg-white text-orange-600 px-8 py-3 rounded-full font-bold">Lanjutkan</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="s6" class="step flex-col h-full relative">
+      <div class="p-4 bg-orange-500 text-white text-center font-bold flex items-center">
+        <div class="w-8 h-8 flex items-center justify-center cursor-pointer mr-2" onclick="next(4)">❮</div>
+        <div class="flex-1 mr-8">Pilih Nasi</div>
+      </div>
+      <div class="flex-1 overflow-y-auto no-scroll p-4 pb-24 space-y-3" id="rice-list"></div>
+      <div id="rice-float" class="hidden fixed bottom-0 left-0 right-0 bg-orange-500 text-white p-4 shadow-2xl" style="max-width:500px;margin:0 auto">
+        <div class="flex justify-between items-center">
+          <div>
+            <span class="text-sm">Total Item: </span>
+            <span class="font-bold text-lg" id="rice-count">0</span>
+          </div>
+          <button onclick="proceedFromRice()" class="bg-white text-orange-600 px-8 py-3 rounded-full font-bold">Lanjutkan</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="s7" class="step flex-col h-full relative">
+      <div class="p-4 bg-orange-500 text-white text-center font-bold flex items-center">
+        <div class="w-8 h-8 flex items-center justify-center cursor-pointer mr-2" onclick="next(6)">❮</div>
+        <div class="flex-1 mr-8">Pilih Minuman</div>
+      </div>
+      <div class="flex-1 overflow-y-auto no-scroll p-4 pb-24 space-y-3" id="drink-list"></div>
+      <div id="drink-float" class="hidden fixed bottom-0 left-0 right-0 bg-orange-500 text-white p-4 shadow-2xl" style="max-width:500px;margin:0 auto">
+        <div class="flex justify-between items-center">
+          <div>
+            <span class="text-sm">Total Item: </span>
+            <span class="font-bold text-lg" id="drink-count">0</span>
+          </div>
+          <button onclick="proceedFromDrink()" class="bg-white text-orange-600 px-8 py-3 rounded-full font-bold">Lanjutkan</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="s8" class="step flex-col h-full relative">
+      <div class="p-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-center font-bold flex items-center">
+        <div class="w-8 h-8 flex items-center justify-center cursor-pointer mr-2" onclick="backFromStep8()">❮</div>
+        <div class="flex-1 mr-8">Tambahkan Pencuci Mulut?</div>
+      </div>
+      <div class="flex-1 overflow-y-auto no-scroll p-4 pb-24 space-y-3" id="dessert-list"></div>
+      <div class="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-yellow-400 to-orange-400 text-white p-4 shadow-2xl" style="max-width:500px;margin:0 auto">
+        <button onclick="skipDessert()" class="w-full bg-white text-gray-700 py-3 rounded-full font-bold mb-2">Tidak, Terima Kasih</button>
+        <div id="dessert-float" class="hidden">
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="text-sm">Total Item: </span>
+              <span class="font-bold text-lg" id="dessert-count">0</span>
+            </div>
+            <button onclick="proceedFromDessert()" class="bg-white text-orange-600 px-8 py-3 rounded-full font-bold">Lanjutkan</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="s9" class="step flex-col items-center justify-center h-full p-6 relative">
+      <div class="btn-back" onclick="next(8)">❮</div>
+      <h2 class="text-2xl font-bold mb-8">Metode Pembayaran</h2>
+      <div class="space-y-4 w-full">
+        <button onclick="setPay('qris')" class="btn w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6">
+          <span class="text-4xl mb-2 block">📱</span>
+          <span class="text-lg font-bold">QRIS</span>
+        </button>
+        <button onclick="setPay('card')" class="btn w-full bg-blue-500 text-white p-6">
+          <span class="text-4xl mb-2 block">💳</span>
+          <span class="text-lg font-bold">KARTU DEBIT/KREDIT</span>
+        </button>
+        <button onclick="setPay('cash')" class="btn w-full bg-white border-2 border-gray-300 p-6">
+          <span class="text-4xl mb-2 block">💵</span>
+          <span class="text-lg font-bold">BAYAR DI KASIR (TUNAI)</span>
+        </button>
+      </div>
+    </section>
+
+    <section id="s10" class="step flex-col items-center justify-center h-full p-6 relative">
+      <div class="btn-back" onclick="next(9)">❮</div>
+      <div class="bg-white p-6 rounded-3xl shadow-2xl w-full text-center">
+        <h2 class="text-xl font-bold mb-4">Scan QRIS</h2>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SEDERHANA" class="mx-auto w-48 mb-4">
+        <p class="text-sm text-gray-500 mb-6">Total: <span class="font-bold text-orange-600" id="qris-total">Rp 0</span></p>
+        <button onclick="confirmPayment()" class="btn w-full bg-orange-500 text-white py-4">Konfirmasi Pembayaran</button>
+      </div>
+    </section>
+
+    <section id="s10b" class="step flex-col h-full relative">
+      <div class="btn-back" onclick="next(9)">❮</div>
+      <div class="p-4 bg-blue-500 text-white text-center font-bold">Konfirmasi Pembayaran Kartu</div>
+      <div class="flex-1 overflow-y-auto no-scroll p-4">
+        <div class="bg-white rounded-2xl p-4 mb-4 mt-8">
+          <h3 class="font-bold text-lg mb-3">Ringkasan Pesanan</h3>
+          <div id="card-order-summary" class="space-y-2 text-sm mb-4"></div>
+          <div class="border-t pt-3 flex justify-between font-bold text-lg">
+            <span>Total:</span>
+            <span class="text-orange-600" id="card-total">Rp 0</span>
+          </div>
+        </div>
+        <div class="bg-blue-50 rounded-2xl p-4 mb-4 text-center">
+          <p class="text-sm text-gray-700 mb-3">Masukkan kartu Anda ke mesin EDC</p>
+          <div class="text-6xl mb-3">💳</div>
+        </div>
+      </div>
+      <button onclick="confirmPayment()" class="m-4 btn bg-blue-500 text-white py-4">Konfirmasi Pembayaran</button>
+    </section>
+
+    <section id="s10c" class="step flex-col h-full relative">
+      <div class="btn-back" onclick="next(9)">❮</div>
+      <div class="p-4 bg-gray-700 text-white text-center font-bold">Konfirmasi Pembayaran Tunai</div>
+      <div class="flex-1 overflow-y-auto no-scroll p-4">
+        <div class="bg-white rounded-2xl p-4 mb-4 mt-8">
+          <h3 class="font-bold text-lg mb-3">Ringkasan Pesanan</h3>
+          <div id="cash-order-summary" class="space-y-2 text-sm mb-4"></div>
+          <div class="border-t pt-3 flex justify-between font-bold text-lg">
+            <span>Total:</span>
+            <span class="text-orange-600" id="cash-total">Rp 0</span>
+          </div>
+        </div>
+        <div class="bg-yellow-50 rounded-2xl p-4 mb-4 border-2 border-yellow-300 text-center">
+          <p class="text-sm text-gray-700 mb-3 font-bold">Harap bayar di kasir:</p>
+          <div class="text-4xl font-black text-orange-600 mb-3" id="cash-amount">Rp 0</div>
+        </div>
+      </div>
+      <button onclick="confirmPayment()" class="m-4 btn bg-orange-500 text-white py-4">Lanjutkan</button>
+    </section>
+
+    <section id="s11" class="step flex-col items-center justify-center h-full p-6 text-center">
+      <div class="print">
+        <!-- Animated SVG Checkmark -->
+        <svg class="mx-auto mb-8" width="120" height="120" viewBox="0 0 120 120">
+          <circle class="checkmark-circle" cx="60" cy="60" r="54" fill="#d1fae5" stroke="#10b981" stroke-width="4"/>
+          <path class="checkmark-check" d="M 35 60 L 52 77 L 85 44" fill="none" stroke="#10b981" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        
+        <h2 class="text-3xl font-bold mb-4">Pembayaran Berhasil!</h2>
+        <div class="bg-white border-2 p-6 rounded-3xl shadow-lg mb-8">
+          <p class="text-xs text-gray-400 uppercase tracking-widest mb-2">Nomor Antrean</p>
+          <h3 class="text-6xl font-black text-orange-600" id="queue">A-001</h3>
+        </div>
+        <button onclick="finish()" class="btn bg-orange-500 text-white px-12 py-4">SELESAI</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const D = {
+      lauk: [
+        {id: 'l1', name: 'Ayam Pop', price: 22000, img: '🍗'},
+        {id: 'l2', name: 'Ayam Goreng', price: 20000, img: '🍗'},
+        {id: 'l3', name: 'Ayam Bakar', price: 23000, img: '🍗'},
+        {id: 'l4', name: 'Ayam Gulai', price: 24000, img: '🍗'},
+        {id: 'l5', name: 'Rendang Daging', price: 28000, img: '🥩'},
+        {id: 'l6', name: 'Dendeng Balado', price: 30000, img: '🥩'},
+        {id: 'l7', name: 'Dendeng Batokok', price: 32000, img: '🥩'},
+        {id: 'l8', name: 'Paru Goreng', price: 18000, img: '🫁'},
+        {id: 'l10', name: 'Ikan Kembung Bakar', price: 20000, img: '🐟'},
+        {id: 'l13', name: 'Ikan Bawal Bakar', price: 30000, img: '🐟'},
+        {id: 'l18', name: 'Gulai Tunjang', price: 26000, img: '🍖'},
+        {id: 'l25', name: 'Gulai Cincang Kambing', price: 35000, img: '🐐'},
+        {id: 'l26', name: 'Sate Padang', price: 25000, img: '🍢'},
+        {id: 'l27', name: 'Martabak Telur', price: 18000, img: '🥞'},
+        {id: 'l29', name: 'Soto Padang', price: 22000, img: '🍜'}
+      ],
+      bundle: [
+        {id: 'b1', name: 'Paket Ayam Pop + Nasi + Es Teh', price: 30000, img: '🍗'},
+        {id: 'b4', name: 'Paket Rendang + Nasi + Es Jeruk', price: 35000, img: '🥩'},
+        {id: 'b7', name: 'Paket Ikan Bakar + Nasi + Jus', price: 38000, img: '🐟'}
+      ],
+      rice: [
+        {id: 'r1', name: 'Nasi Putih', price: 5000, img: '🍚'},
+        {id: 'r2', name: 'Nasi Merah', price: 7000, img: '🍚'},
+        {id: 'r3', name: 'Nasi Kuning', price: 8000, img: '🍚'}
+      ],
+      drink: [
+        {id: 'd1', name: 'Es Teh Manis', price: 5000, img: '🧋'},
+        {id: 'd6', name: 'Juice Alpukat', price: 15000, img: '🥑'},
+        {id: 'd13', name: 'Juice Jeruk', price: 12000, img: '🍊'}
+      ],
+      dessert: [
+        {id: 'ds1', name: 'Bubur Kampiun', price: 12000, img: '🥣'},
+        {id: 'ds4', name: 'Es Campur', price: 15000, img: '🍧'}
+      ]
+    };
+
+    let S = {
+      step: 1,
+      type: '',
+      path: '',
+      order: [],
+      total: 0,
+      pay: ''
+    };
+
+    function next(n) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      const targetId = 's' + n;
+      const el = document.getElementById(targetId);
+      if (el) el.classList.add('active', 'slide');
+      S.step = n;
+    }
+
+    function setType(t) {
+      S.type = t;
+      next(3);
+    }
+
+    function setPath(p) {
+      S.path = p;
+      if (p === 'paket') {
+        renderListWithAdd('bundle-list', D.bundle, 'bundle');
+        next(5);
+      } else {
+        renderListWithAdd('lauk-list', D.lauk, 'lauk');
+        next(4);
+      }
+    }
+
+    function renderListWithAdd(containerId, items, type) {
+      const c = document.getElementById(containerId);
+      c.innerHTML = items.map(i => `
+        <div class="menu-item bg-white border-2 border-gray-200 rounded-2xl p-4 flex items-center gap-3">
+          <span class="text-4xl">${i.img}</span>
+          <div class="text-left flex-1">
+            <div class="font-bold">${i.name}</div>
+            <div class="text-orange-600 font-semibold">Rp ${i.price.toLocaleString('id-ID')}</div>
+          </div>
+          <button onclick="addItem('${i.id}','${type}')" class="btn-add bg-orange-500 text-white w-12 h-12 rounded-full text-2xl font-bold">+</button>
+        </div>
+      `).join('');
+    }
+
+    function addItem(itemId, type) {
+      let item = [...D.lauk, ...D.bundle, ...D.rice, ...D.drink, ...D.dessert].find(i => i.id === itemId);
+      if (!item) return;
+
+      const existing = S.order.find(o => o.id === itemId);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        S.order.push({...item, quantity: 1});
+      }
+
+      S.total += item.price;
+      updateFloatButton(type);
+    }
+
+    function updateFloatButton(type) {
+      const count = S.order.filter(o => {
+        return D[type].some(d => d.id === o.id);
+      }).reduce((sum, item) => sum + item.quantity, 0);
+
+      const floatBtn = document.getElementById(type + '-float');
+      const countEl = document.getElementById(type + '-count');
+
+      if (floatBtn && countEl) {
+        if (count > 0) {
+          floatBtn.classList.remove('hidden');
+          countEl.innerText = count;
+        } else {
+          floatBtn.classList.add('hidden');
+        }
+      }
+    }
+
+    function proceedFromLauk() {
+      renderListWithAdd('rice-list', D.rice, 'rice');
+      next(6);
+    }
+
+    function proceedFromBundle() {
+      renderListWithAdd('dessert-list', D.dessert, 'dessert');
+      next(8);
+    }
+
+    function proceedFromRice() {
+      renderListWithAdd('drink-list', D.drink, 'drink');
+      next(7);
+    }
+
+    function proceedFromDrink() {
+      renderListWithAdd('dessert-list', D.dessert, 'dessert');
+      next(8);
+    }
+
+    function proceedFromDessert() {
+      next(9);
+    }
+
+    function skipDessert() {
+      next(9);
+    }
+
+    function backFromStep8() {
+      S.path === 'paket' ? next(5) : next(7);
+    }
+
+    function setPay(p) {
+      S.pay = p;
+      const totalStr = 'Rp ' + S.total.toLocaleString('id-ID');
+      if (p === 'qris') {
+        document.getElementById('qris-total').innerText = totalStr;
+        next(10);
+      } else if (p === 'card') {
+        renderOrderSummary('card-order-summary', 'card-total');
+        next('10b');
+      } else {
+        renderOrderSummary('cash-order-summary', 'cash-total');
+        document.getElementById('cash-amount').innerText = totalStr;
+        next('10c');
+      }
+    }
+
+    function renderOrderSummary(summaryId, totalId) {
+      const container = document.getElementById(summaryId);
+      container.innerHTML = S.order.map(item => `
+        <div class="flex justify-between py-1">
+          <span>${item.name} (x${item.quantity})</span>
+          <span class="font-semibold">Rp ${(item.price * item.quantity).toLocaleString('id-ID')}</span>
+        </div>
+      `).join('');
+      document.getElementById(totalId).innerText = 'Rp ' + S.total.toLocaleString('id-ID');
+    }
+
+    function confirmPayment() {
+      setTimeout(() => {
+        const letters = 'ABCDEFGH';
+        const q = letters[Math.floor(Math.random() * 8)] + '-' + (Math.floor(Math.random() * 900) + 100);
+        document.getElementById('queue').innerText = q;
+        next(11);
+      }, 2000);
+    }
+
+    function finish() {
+      S = { step: 1, type: '', path: '', order: [], total: 0, pay: '' };
+      next(1);
+    }
+  </script>
+</body>
+
+</html>
