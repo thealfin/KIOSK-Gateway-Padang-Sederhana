@@ -11,47 +11,51 @@
     <style>
         @media print {
             @page {
-                size: A6;
+                size: 58mm auto;
                 margin: 0;
             }
-            body {
-                visibility: hidden;
-                background: white;
+            /* Hide everything by default */
+            body * {
+                display: none !important;
             }
-            #printable-area, #printable-area * {
+            /* Show only the printable area and its ancestors (as containers) */
+            body, .kiosk-canvas, #step-5, #printable-area, #printable-area * {
+                display: block !important;
                 visibility: visible !important;
-                color: black !important;
+            }
+            .kiosk-canvas, #step-5 {
+                position: static !important;
+                width: 58mm !important;
+                height: auto !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                background: white !important;
+                box-shadow: none !important;
+                overflow: visible !important;
             }
             #printable-area {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                margin: 0;
-                padding: 4mm 10mm;
-                font-family: 'Courier New', Courier, monospace;
+                width: 58mm !important;
+                max-width: 58mm !important;
+                padding: 2mm !important;
+                border: none !important;
+                box-shadow: none !important;
+                font-family: 'Courier New', Courier, monospace !important;
+                color: black !important;
             }
-            /* Reset styles for print to look like standard receipt */
-            #printable-area { border: none !important; box-shadow: none !important; border-radius: 0 !important; }
-            #printable-area h1 { font-size: 18pt !important; margin-bottom: 5pt !important; text-align: center; }
-            #printable-area h3 { font-size: 40pt !important; margin: 10pt 0 !important; text-align: center; }
-            #printable-area .text-xl, #printable-area .text-2xl, #printable-area .text-4xl { font-size: 12pt !important; }
-            #printable-area .pb-6, #printable-area .mb-6, #printable-area .pt-6, #printable-area .mb-8 { 
-                padding-bottom: 10pt !important; 
-                margin-bottom: 10pt !important; 
-                padding-top: 10pt !important;
-            }
-            #printable-area .border-b-4, #printable-area .border-t-4 { 
-                border-bottom: 1pt dashed black !important; 
-                border-top: 1pt dashed black !important; 
-                border-width: 0 0 1pt 0 !important;
-            }
-            #printable-area .space-y-4 > * + * { margin-top: 5pt !important; }
-            #printable-area .bg-gray-50 { background: transparent !important; }
-            #printable-area .shadow-inner { box-shadow: none !important; }
-            #printable-area .flex { display: flex !important; justify-content: space-between !important; }
+            #printable-area h1 { font-size: 14pt !important; text-align: center; font-weight: bold !important; margin-bottom: 2mm !important; }
+            #printable-area h3 { font-size: 32pt !important; text-align: center; font-weight: 900 !important; margin: 4mm 0 !important; }
+            #receipt-items div { font-size: 9pt !important; font-weight: bold !important; }
+            .flex { display: flex !important; justify-content: space-between !important; }
             .no-print { display: none !important; }
-            .kiosk-canvas { overflow: visible !important; height: auto !important; box-shadow: none !important; }
+            
+            /* Dashed line replacement for thermal printers */
+            .border-dashed {
+                border-style: dashed !important;
+                border-color: black !important;
+                border-width: 1pt 0 0 0 !important;
+                height: 1px !important;
+                margin: 3mm 0 !important;
+            }
         }
 
         :root {
@@ -1287,18 +1291,28 @@
 
             Object.values(groupedReceipt).forEach(ci => {
                  const row = document.createElement('div');
-                 row.className = 'flex justify-between mb-1';
+                 row.className = 'flex flex-col mb-2 border-b border-gray-50 pb-1';
+                 
+                 const mainLine = document.createElement('div');
+                 mainLine.className = 'flex justify-between w-full';
+                 
                  if (ci.qty > 1) {
-                     row.innerHTML = `
-                         <span>${ci.qty}X ${ci.name}</span>
-                         <span class="text-gray-400 font-mono text-sm mr-auto ml-2">@ ${formatIDR(ci.price)}</span>
-                         <span>${formatIDR(ci.price * ci.qty)}</span>
+                     mainLine.innerHTML = `
+                         <span class="flex-1">${ci.qty}x ${ci.name}</span>
+                         <span class="ml-2">${formatIDR(ci.price * ci.qty)}</span>
                      `;
+                     row.appendChild(mainLine);
+                     
+                     const subLine = document.createElement('div');
+                     subLine.className = 'text-xs text-gray-400';
+                     subLine.innerText = `@ ${formatIDR(ci.price)}`;
+                     row.appendChild(subLine);
                  } else {
-                     row.innerHTML = `
-                         <span>${ci.name}</span>
-                         <span>${formatIDR(ci.price)}</span>
+                     mainLine.innerHTML = `
+                         <span class="flex-1">${ci.name}</span>
+                         <span class="ml-2">${formatIDR(ci.price)}</span>
                      `;
+                     row.appendChild(mainLine);
                  }
                  itemsWrap.appendChild(row);
              });
