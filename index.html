@@ -54,28 +54,365 @@
             .kiosk-canvas { overflow: visible !important; height: auto !important; box-shadow: none !important; }
         }
 
+        :root {
+            --canvas-width: 100vw;
+            --canvas-height: 100vh;
+            --sidebar-width: 280px;
+        }
+
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #1a1a1a; 
+            background: radial-gradient(circle at center, #2c2c2c 0%, #121212 100%); 
             display: flex; 
             justify-content: center; 
             align-items: center;
             height: 100vh;
+            width: 100vw;
             margin: 0;
             overflow: hidden;
         }
 
-        /* Container simulasi layar Kiosk 1080x1920 */
+        /* Container Kiosk Utama */
         .kiosk-canvas {
-            width: 1080px;
-            height: 1920px;
             background-color: #ffffff;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 100px rgba(0,0,0,0.5);
+            box-shadow: 0 0 100px rgba(0,0,0,0.8);
+            width: 100vw;
+            height: 100vh;
+            transition: all 0.3s ease;
         }
+
+        /* =========================================
+           MODE PORTRAIT (DEFAULT) - Fix & Lock
+           ========================================= */
+        @media (orientation: portrait) {
+            .kiosk-canvas {
+                max-width: 1080px; /* Standar Kiosk */
+                margin: auto;
+            }
+            
+            #step-3 .flex-1.flex { flex-direction: column !important; }
+            #step-3 .w-\[280px\] { 
+                width: 100% !important; 
+                padding: 1rem !important; 
+                display: flex !important; 
+                flex-direction: row !important; 
+                overflow-x: auto !important; 
+                gap: 0.75rem !important;
+                border-bottom: 1px solid #f3f4f6;
+                background: white;
+                z-index: 10;
+                scrollbar-width: none;
+            }
+            #step-3 .category-btn { flex: 0 0 auto !important; }
+            
+            #menu-container { 
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            #cart-details { bottom: 8rem !important; width: 100% !important; left: 0 !important; right: auto !important; border-radius: 2rem 2rem 0 0 !important; }
+
+            /* Step 4: Payment Selection (Portrait) */
+            #step-4 .bg-white {
+                width: 95% !important;
+                max-width: 1000px !important;
+                min-height: 60vh !important;
+                max-height: 90vh !important;
+                padding: 4rem 3rem !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+            }
+            #payment-selection { 
+                gap: 4rem !important; 
+                margin-top: 2rem !important;
+                margin-bottom: 2rem !important;
+            }
+            #payment-selection button { 
+                padding: 5rem 3rem !important; 
+                min-height: 300px !important;
+            }
+            #payment-selection .text-8xl { font-size: 10rem !important; }
+            #payment-selection .text-3xl { font-size: 4rem !important; }
+            #final-total { font-size: 8rem !important; }
+            #step-4 h2 { font-size: 6rem !important; margin-bottom: 4rem !important; }
+            #step-4 .text-3xl.text-gray-500 { font-size: 4rem !important; }
+            #step-4 button[onclick="nextStep(3)"] { 
+                font-size: 3rem !important; 
+                padding: 2rem 4rem !important;
+                margin-top: 4rem !important;
+            }
+
+            /* Step 5: Receipt (Portrait) */
+            #step-5 { 
+                justify-content: flex-start !important; 
+                padding-top: 4rem !important; 
+                padding-bottom: 10rem !important; /* Ruang ekstra di bawah */
+                overflow-y: auto !important; 
+            }
+            #step-5 .no-print:first-child .w-64 { 
+                width: 10rem !important; 
+                height: 10rem !important; 
+                font-size: 6rem !important; 
+                margin-bottom: 1.5rem !important;
+            }
+            #step-5 .no-print:first-child h2 { font-size: 5rem !important; margin-bottom: 1rem !important; }
+            #step-5 .no-print:first-child p { font-size: 2rem !important; margin-bottom: 2rem !important; }
+            
+            #step-5 #printable-area {
+                margin: 3rem auto !important;
+                width: 95% !important;
+                max-width: 800px !important;
+                padding: 3rem !important;
+            }
+            
+            #step-5 .flex.gap-6.mt-12.no-print {
+                margin-top: 4rem !important;
+                margin-bottom: 12rem !important; /* Jarak bawah sangat lega */
+                gap: 3rem !important;
+            }
+            #step-5 .flex.gap-6.mt-12.no-print button { 
+                padding: 3rem 5rem !important; 
+                font-size: 3rem !important;
+            }
+        }
+
+        /* =========================================
+           MODE LANDSCAPE (AUTO DETECT & RESPONSIVE)
+           ========================================= */
+        @media (orientation: landscape) {
+            .kiosk-canvas {
+                max-width: 100% !important;
+                width: 100vw !important;
+            }
+
+            /* Sidebar Navigasi Kiri */
+            #step-3 .flex-1.flex { flex-direction: row !important; }
+            #step-3 .w-\[280px\] { 
+                width: var(--sidebar-width) !important; 
+                height: 100% !important;
+                padding: 1.5rem !important; 
+                display: flex !important; 
+                flex-direction: column !important; 
+                overflow-y: auto !important; 
+                overflow-x: hidden !important;
+                gap: 1rem !important;
+                border-right: 2px solid #f3f4f6;
+                border-bottom: none !important;
+                background: #f9fafb;
+                z-index: 10;
+            }
+            #step-3 .category-btn { 
+                width: 100% !important; 
+                justify-content: flex-start !important;
+                padding: 1.2rem !important;
+                flex: 0 0 auto !important;
+                flex-direction: row !important;
+            }
+
+            /* Grid Menu Responsive */
+            #menu-container { 
+                display: grid !important;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+                padding: 2rem !important;
+                gap: 1.5rem !important;
+                align-content: start;
+                padding-bottom: 10rem !important;
+            }
+
+            /* Cart Details - Floating Right or Bottom Right */
+            #cart-details { 
+                bottom: 120px !important; 
+                left: auto !important; 
+                right: 1.5rem !important; 
+                width: 45% !important;
+                max-height: 50vh !important;
+                border-radius: 2.5rem !important;
+                box-shadow: 0 15px 50px rgba(0,0,0,0.25) !important;
+            }
+
+            /* Step 1 & 2 Layout */
+            #step-1, #step-2 { padding: 5rem !important; }
+            #step-2 .flex-col { flex-direction: row !important; flex-wrap: wrap; justify-content: center; gap: 3rem !important; }
+            #step-2 .bg-white { width: 400px !important; }
+
+            /* Step 5 (Bill Result) Landscape */
+            #step-5 { 
+                flex-direction: row !important; 
+                padding: 2rem !important; 
+                gap: 2rem !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            #step-5 .no-print:first-child { 
+                flex: 1 !important; 
+                margin-bottom: 0 !important;
+                height: 100% !important;
+                justify-content: center !important;
+            }
+            #step-5 .no-print:first-child .w-64 { width: 12rem !important; height: 12rem !important; text-size-adjust: auto; }
+            #step-5 .no-print:first-child h2 { font-size: 3rem !important; }
+            #step-5 .no-print:first-child p { font-size: 1.5rem !important; }
+
+            #step-5 #printable-area { 
+                flex: 1.2 !important; 
+                max-width: 500px !important; 
+                margin: 0 !important; 
+                transform: scale(0.85) !important;
+                max-height: 95vh !important;
+                overflow-y: auto !important;
+            }
+
+            #step-5 .flex.gap-6.mt-12.no-print { 
+                flex: 1 !important; 
+                flex-direction: column !important; 
+                margin-top: 0 !important;
+                gap: 2rem !important;
+                height: 100% !important;
+                justify-content: center !important;
+            }
+            #step-5 .flex.gap-6.mt-12.no-print button { width: 100% !important; padding: 2rem !important; }
+        }
+
+        /* =========================================
+           DUKUNGAN RESOLUSI KHUSUS
+           ========================================= */
+        
+        /* 1920x1080 (FHD) */
+        @media (min-width: 1920px) and (max-height: 1080px) and (orientation: landscape) {
+             #menu-container { grid-template-columns: repeat(4, 1fr) !important; }
+             html { font-size: 18px; }
+        }
+
+        /* 1920x1200 (WUXGA) */
+        @media (min-width: 1920px) and (min-height: 1100px) and (orientation: landscape) {
+             #menu-container { grid-template-columns: repeat(4, 1fr) !important; }
+             html { font-size: 20px; }
+        }
+
+        /* 4K Landscape (3840x2160) */
+        @media (min-width: 3800px) and (orientation: landscape) {
+            :root { --sidebar-width: 500px; }
+            html { font-size: 32px; }
+            .kiosk-canvas { max-width: 3840px; }
+            #step-3 .w-\[280px\] { width: 500px !important; }
+            #menu-container { grid-template-columns: repeat(5, 1fr) !important; gap: 2rem !important; }
+            #cart-details { width: 45% !important; bottom: 180px !important; max-height: 50vh !important; }
+            
+            /* Step 5 4K Landscape */
+            #step-5 { gap: 5rem !important; }
+            #step-5 .no-print:first-child .w-64 { width: 24rem !important; height: 24rem !important; }
+            #step-5 .no-print:first-child h2 { font-size: 6rem !important; }
+            #step-5 .no-print:first-child p { font-size: 3rem !important; }
+            #step-5 #printable-area { transform: scale(1.2) !important; max-width: 800px !important; }
+            #step-5 .flex.gap-6.mt-12.no-print button { font-size: 4rem !important; padding: 4rem !important; }
+        }
+
+        /* 4K Portrait (2160x3840) */
+        @media (min-height: 3800px) and (orientation: portrait) {
+            html { font-size: 32px; }
+            .kiosk-canvas { max-width: 2160px; }
+            #menu-container { grid-template-columns: repeat(3, 1fr) !important; }
+        }
+
+        /* Penyesuaian Monitor 27" (QHD) */
+        @media (min-width: 2560px) and (orientation: landscape) {
+            html { font-size: 20px; }
+        }
+
+        /* Smartphone Small */
+        @media (max-width: 640px) {
+            html { font-size: 14px; }
+            .p-20 { padding: 1.5rem !important; }
+            #menu-container { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+
+        /* Penyesuaian Font Global */
+        html {
+            font-size: clamp(12px, 1.5vh, 20px);
+        }
+
+        /* Override Utility Classes */
+        .p-20 { padding: 2rem !important; }
+        .mb-20 { margin-bottom: 2.5rem !important; }
+        .mb-32 { margin-bottom: 4rem !important; }
+        .mb-24 { margin-bottom: 3rem !important; }
+        
+        .w-80 { width: 14rem !important; }
+        .w-48 { width: 8rem !important; }
+        .h-48 { height: 8rem !important; }
+        .text-5xl { font-size: 2.5rem !important; }
+        .text-4xl { font-size: 2rem !important; }
+        .text-2xl { font-size: 1.2rem !important; }
+        
+        /* Sidebar Styling Shared */
+        #step-3 .w-\[280px\]::-webkit-scrollbar { display: none; }
+        
+        #step-3 .category-btn { 
+            flex: 0 0 auto !important; 
+            padding: 0.6rem 1.2rem !important; 
+            border-radius: 1.2rem !important;
+            font-size: 1rem !important;
+            gap: 0.5rem !important;
+        }
+        #step-3 .category-btn img { width: 1.8rem !important; height: 1.8rem !important; }
+        
+        /* Menu Grid Shared */
+        #menu-container { 
+            padding: 1rem !important; 
+            gap: 1rem !important; 
+        }
+        
+        .menu-card { 
+            padding: 0.8rem !important; 
+            border-radius: 1.5rem !important;
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .menu-card .h-60 { height: 9rem !important; border-radius: 1.2rem !important; }
+        .menu-card h3 { font-size: 1.1rem !important; margin-top: 0.5rem !important; }
+        .menu-card .text-red-600 { font-size: 1.2rem !important; }
+        .menu-card button { padding: 0.6rem !important; font-size: 1rem !important; border-radius: 0.8rem !important; }
+
+        /* Bottom Nav & Cart Details */
+        .bottom-nav { 
+            padding: 1rem 1.5rem !important; 
+            min-height: 8rem !important; 
+            background: white !important;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.05) !important;
+            z-index: 60;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            border-top: 2px solid #f3f4f6 !important;
+        }
+
+        #cart-details { 
+            background: white;
+            z-index: 50;
+            max-height: 70vh !important;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 -20px 80px rgba(0,0,0,0.1) !important;
+            border-top: 1px solid #fee2e2 !important;
+        }
+
+        #cart-items-list { 
+            max-height: 40vh !important; 
+            overflow-y: auto !important;
+        }
+
+        #total-price { font-size: 2rem !important; }
+        #checkout-btn { height: 4rem !important; font-size: 1.4rem !important; width: 45% !important; border-radius: 1.5rem !important; }
+        #cart-arrow { width: 3rem !important; height: 3rem !important; font-size: 2rem !important; }
+        
+        /* Modal Penyesuaian - Moved to Orientation Media Queries */
+        
+        /* Receipt Penyesuaian - Moved to Orientation Media Queries */
+        #queue-number { font-size: 5rem !important; }
 
         .bg-pattern {
             background-image: radial-gradient(#f0f0f0 1.5px, transparent 1.5px);
@@ -93,7 +430,7 @@
         .hidden-step { display: none !important; }
 
         .menu-card {
-            height: 480px; /* Ukuran lebih besar untuk layar portrait */
+            height: auto;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -104,14 +441,6 @@
             color: white;
             transform: scale(1.05);
             box-shadow: 0 10px 20px rgba(204, 0, 0, 0.2);
-        }
-
-        /* Efek bayangan halus untuk navigasi bawah */
-        .bottom-nav {
-            height: 320px;
-            background: white;
-            box-shadow: 0 -20px 50px rgba(0,0,0,0.05);
-            padding: 40px 60px;
         }
 
         .best-seller-label {
@@ -500,7 +829,8 @@
             // Tambahkan Pesan Manis untuk Cemilan
             if (filter === 'cemilan') {
                 const promoDiv = document.createElement('div');
-                promoDiv.className = 'col-span-2 bg-gradient-to-r from-red-50 to-orange-50 p-10 rounded-[3rem] border-2 border-red-100 mb-4 animate__animated animate__fadeInDown flex gap-6 items-start';
+                // Menggunakan col-span-full agar memenuhi seluruh lebar grid
+                promoDiv.className = 'col-span-full bg-gradient-to-r from-red-50 to-orange-50 p-10 rounded-[3rem] border-2 border-red-100 mb-8 animate__animated animate__fadeInDown flex gap-6 items-start w-full';
                 promoDiv.innerHTML = `
                     <button onclick="filterMenu('nasi')" class="mt-1 w-12 h-12 rounded-full border-2 border-gray-600 flex items-center justify-center flex-shrink-0 hover:bg-white transition-all active:scale-90">
                         <i class="ri-arrow-left-s-line text-black text-2xl"></i>
