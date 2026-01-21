@@ -57,7 +57,21 @@
         :root {
             --canvas-width: 100vw;
             --canvas-height: 100vh;
-            --sidebar-width: 280px;
+            --sidebar-width: clamp(200px, 20vw, 280px);
+            --primary-red: #dc2626;
+        }
+
+        html {
+            /* Logic scaling responsif global */
+            font-size: clamp(12px, 1.2vw, 20px);
+        }
+
+        @media (max-width: 768px) {
+            html { font-size: clamp(10px, 2.5vw, 16px); }
+        }
+
+        @media (max-width: 480px) {
+            html { font-size: clamp(8px, 3.5vw, 14px); }
         }
 
         body { 
@@ -90,93 +104,121 @@
            ========================================= */
         @media (orientation: portrait) {
             .kiosk-canvas {
-                max-width: 1080px; /* Standar Kiosk */
+                max-width: 100vw;
                 margin: auto;
             }
             
             #step-3 .flex-1.flex { flex-direction: column !important; }
             #step-3 .w-\[280px\] { 
                 width: 100% !important; 
-                padding: 1rem !important; 
+                padding: 0.5rem !important; 
                 display: flex !important; 
                 flex-direction: row !important; 
                 overflow-x: auto !important; 
-                gap: 0.75rem !important;
+                gap: 0.5rem !important;
                 border-bottom: 1px solid #f3f4f6;
                 background: white;
                 z-index: 10;
                 scrollbar-width: none;
             }
-            #step-3 .category-btn { flex: 0 0 auto !important; }
+            #step-3 .category-btn { 
+                flex: 0 0 auto !important; 
+                padding: 0.75rem 1rem !important;
+                font-size: 1rem !important;
+            }
             
             #menu-container { 
                 grid-template-columns: repeat(2, 1fr) !important;
+                gap: 1rem !important;
+                padding: 1rem !important;
             }
 
-            #cart-details { bottom: 8rem !important; width: 100% !important; left: 0 !important; right: auto !important; border-radius: 2rem 2rem 0 0 !important; }
+            #cart-details { bottom: 6rem !important; width: 100% !important; left: 0 !important; right: auto !important; border-radius: 1.5rem 1.5rem 0 0 !important; }
 
             /* Step 4: Payment Selection (Portrait) */
             #step-4 .bg-white {
-                width: 95% !important;
-                max-width: 1000px !important;
-                min-height: 60vh !important;
+                width: 94% !important;
+                max-width: 500px !important;
+                min-height: auto !important;
                 max-height: 90vh !important;
-                padding: 4rem 3rem !important;
+                padding: 1.5rem 1rem !important;
                 display: flex !important;
                 flex-direction: column !important;
-                justify-content: center !important;
+                justify-content: flex-start !important;
+                border-radius: 2rem !important;
             }
             #payment-selection { 
-                gap: 4rem !important; 
-                margin-top: 2rem !important;
-                margin-bottom: 2rem !important;
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 0.75rem !important; 
+                margin-top: 0.5rem !important;
+                margin-bottom: 0.5rem !important;
             }
             #payment-selection button { 
-                padding: 5rem 3rem !important; 
-                min-height: 300px !important;
+                padding: 1rem 0.5rem !important; 
+                min-height: 80px !important;
+                border-radius: 1.5rem !important;
+                flex-direction: column !important;
             }
-            #payment-selection .text-8xl { font-size: 10rem !important; }
-            #payment-selection .text-3xl { font-size: 4rem !important; }
-            #final-total { font-size: 8rem !important; }
-            #step-4 h2 { font-size: 6rem !important; margin-bottom: 4rem !important; }
-            #step-4 .text-3xl.text-gray-500 { font-size: 4rem !important; }
+            #payment-selection .text-8xl { font-size: 2.5rem !important; }
+            #payment-selection .text-3xl { font-size: 1rem !important; }
+            
+            #step-4 h2 { font-size: 1.5rem !important; margin-bottom: 1rem !important; }
+            #step-4 .flex.justify-between.mb-12.px-10 {
+                flex-direction: column !important;
+                gap: 0.25rem !important;
+                margin-bottom: 0.75rem !important;
+                padding: 0 !important;
+                align-items: center !important;
+            }
+            #step-4 .text-3xl.text-gray-500 { font-size: 1rem !important; }
+            #final-total { font-size: 2rem !important; line-height: 1.2 !important; }
+            
+            #qris-container { padding: 0.75rem !important; margin-bottom: 0.75rem !important; border-radius: 1.5rem !important; }
+            #qris-qr-wrapper { padding: 0.5rem !important; margin-bottom: 0.5rem !important; border-radius: 1rem !important; }
+            #qris-image { width: 8rem !important; }
+            #qris-container p { font-size: 0.875rem !important; margin-bottom: 0.25rem !important; }
+            #payment-timer { font-size: 0.875rem !important; }
+            
             #step-4 button[onclick="nextStep(3)"] { 
-                font-size: 3rem !important; 
-                padding: 2rem 4rem !important;
-                margin-top: 4rem !important;
+                font-size: 1rem !important; 
+                padding: 0.5rem 1rem !important;
+                margin-top: 0.5rem !important;
+                border-radius: 0.75rem !important;
             }
 
             /* Step 5: Receipt (Portrait) */
             #step-5 { 
                 justify-content: flex-start !important; 
-                padding-top: 4rem !important; 
-                padding-bottom: 10rem !important; /* Ruang ekstra di bawah */
+                padding: 1rem !important;
                 overflow-y: auto !important; 
             }
             #step-5 .no-print:first-child .w-64 { 
-                width: 10rem !important; 
-                height: 10rem !important; 
-                font-size: 6rem !important; 
-                margin-bottom: 1.5rem !important;
+                width: 4rem !important; 
+                height: 4rem !important; 
+                font-size: 2rem !important; 
+                margin-bottom: 0.5rem !important;
             }
-            #step-5 .no-print:first-child h2 { font-size: 5rem !important; margin-bottom: 1rem !important; }
-            #step-5 .no-print:first-child p { font-size: 2rem !important; margin-bottom: 2rem !important; }
+            #step-5 .no-print:first-child h2 { font-size: 1.5rem !important; margin-bottom: 0.25rem !important; }
+            #step-5 .no-print:first-child p { font-size: 0.875rem !important; margin-bottom: 0.5rem !important; }
             
             #step-5 #printable-area {
-                margin: 3rem auto !important;
-                width: 95% !important;
-                max-width: 800px !important;
-                padding: 3rem !important;
+                margin: 0.25rem auto !important;
+                width: 100% !important;
+                padding: 0.75rem !important;
+                border-radius: 1rem !important;
             }
+            #queue-number { font-size: 3rem !important; }
             
             #step-5 .flex.gap-6.mt-12.no-print {
-                margin-top: 4rem !important;
-                margin-bottom: 12rem !important; /* Jarak bawah sangat lega */
-                gap: 3rem !important;
+                margin-top: 1rem !important;
+                margin-bottom: 2rem !important;
+                gap: 0.5rem !important;
             }
             #step-5 .flex.gap-6.mt-12.no-print button { 
-                padding: 3rem 5rem !important; 
-                font-size: 3rem !important;
+                padding: 0.5rem 1rem !important; 
+                font-size: 1rem !important;
+                border-radius: 1.5rem !important;
             }
         }
 
@@ -239,6 +281,68 @@
             #step-2 .flex-col { flex-direction: row !important; flex-wrap: wrap; justify-content: center; gap: 3rem !important; }
             #step-2 .bg-white { width: 400px !important; }
 
+            /* Step 4: Payment (Landscape) - Fix Overlap */
+            #step-4 .bg-white {
+                width: 90% !important;
+                max-width: 800px !important;
+                max-height: 95vh !important;
+                padding: 1.5rem !important;
+                display: grid !important;
+                grid-template-columns: 1fr 1.2fr !important;
+                gap: 1.5rem !important;
+                align-items: start !important;
+                border-radius: 2rem !important;
+            }
+            #step-4 h2 { grid-column: span 2 !important; font-size: 1.5rem !important; margin-bottom: 0.5rem !important; }
+            #payment-selection { 
+                grid-column: 1 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0.75rem !important;
+                margin: 0 !important;
+            }
+            #payment-selection button { 
+                min-height: 60px !important; 
+                padding: 0.75rem !important; 
+                flex-direction: row !important;
+                gap: 1rem !important;
+            }
+            #payment-selection .text-8xl { font-size: 2rem !important; }
+            #payment-selection .text-3xl { font-size: 1rem !important; }
+
+            .payment-summary-wrapper {
+                grid-column: 2 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0.75rem !important;
+            }
+            #step-4 .flex.justify-between.mb-12.px-10 {
+                margin: 0 !important;
+                padding: 0 !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+            }
+            #step-4 .text-3xl.text-gray-500 { font-size: 1rem !important; }
+            #final-total { font-size: 1.75rem !important; }
+
+            #qris-container, #card-container { 
+                margin: 0 !important; 
+                padding: 0.75rem !important; 
+                border-radius: 1.5rem !important;
+            }
+            #qris-image { width: 7rem !important; }
+            #qris-qr-wrapper { margin-bottom: 0.5rem !important; padding: 0.5rem !important; }
+            #qris-container p { font-size: 0.875rem !important; }
+            
+            #step-4 button[onclick="nextStep(3)"] { 
+                grid-column: span 2 !important;
+                width: auto !important;
+                margin: 0 auto !important;
+                padding: 0.5rem 1.5rem !important;
+                font-size: 1rem !important;
+            }
+
             /* Step 5 (Bill Result) Landscape */
             #step-5 { 
                 flex-direction: row !important; 
@@ -281,139 +385,13 @@
            DUKUNGAN RESOLUSI KHUSUS
            ========================================= */
         
-        /* 1920x1080 (FHD) */
-        @media (min-width: 1920px) and (max-height: 1080px) and (orientation: landscape) {
-             #menu-container { grid-template-columns: repeat(4, 1fr) !important; }
-             html { font-size: 18px; }
+        /* Smartphone Khusus (1080x2400 - 1080x2436) */
+        @media (max-width: 1100px) and (min-height: 2200px) {
+            html { font-size: clamp(14px, 4vw, 24px); }
+            #step-4 .bg-white { width: 95% !important; padding: 2.5rem 1.5rem !important; }
+            #final-total { font-size: 3rem !important; }
+            #qris-image { width: 12rem !important; }
         }
-
-        /* 1920x1200 (WUXGA) */
-        @media (min-width: 1920px) and (min-height: 1100px) and (orientation: landscape) {
-             #menu-container { grid-template-columns: repeat(4, 1fr) !important; }
-             html { font-size: 20px; }
-        }
-
-        /* 4K Landscape (3840x2160) */
-        @media (min-width: 3800px) and (orientation: landscape) {
-            :root { --sidebar-width: 500px; }
-            html { font-size: 32px; }
-            .kiosk-canvas { max-width: 3840px; }
-            #step-3 .w-\[280px\] { width: 500px !important; }
-            #menu-container { grid-template-columns: repeat(5, 1fr) !important; gap: 2rem !important; }
-            #cart-details { width: 45% !important; bottom: 180px !important; max-height: 50vh !important; }
-            
-            /* Step 5 4K Landscape */
-            #step-5 { gap: 5rem !important; }
-            #step-5 .no-print:first-child .w-64 { width: 24rem !important; height: 24rem !important; }
-            #step-5 .no-print:first-child h2 { font-size: 6rem !important; }
-            #step-5 .no-print:first-child p { font-size: 3rem !important; }
-            #step-5 #printable-area { transform: scale(1.2) !important; max-width: 800px !important; }
-            #step-5 .flex.gap-6.mt-12.no-print button { font-size: 4rem !important; padding: 4rem !important; }
-        }
-
-        /* 4K Portrait (2160x3840) */
-        @media (min-height: 3800px) and (orientation: portrait) {
-            html { font-size: 32px; }
-            .kiosk-canvas { max-width: 2160px; }
-            #menu-container { grid-template-columns: repeat(3, 1fr) !important; }
-        }
-
-        /* Penyesuaian Monitor 27" (QHD) */
-        @media (min-width: 2560px) and (orientation: landscape) {
-            html { font-size: 20px; }
-        }
-
-        /* Smartphone Khusus (1080x2400 - 1080x2436) - Portrait */
-        @media (width: 1080px) and (min-height: 2400px) and (max-height: 2436px) and (orientation: portrait) {
-            html { font-size: 22px; }
-            .kiosk-canvas { max-width: 1080px; }
-            
-            /* Welcome Page */
-            #step-1 .w-80 { width: 18rem !important; }
-            #step-1 h1 { font-size: 2.5rem !important; margin-bottom: 5rem !important; }
-            #step-1 .w-48 { width: 10rem !important; height: 10rem !important; }
-            #step-1 .text-5xl { font-size: 4rem !important; }
-            
-            /* Order Type */
-            #step-2 h2 { font-size: 4rem !important; margin-bottom: 5rem !important; }
-            #step-2 .bg-white { padding: 3rem !important; border-radius: 3rem !important; }
-            #step-2 .text-7xl { font-size: 6rem !important; }
-            #step-2 .text-4xl { font-size: 3rem !important; }
-
-            /* Menu Grid */
-            #menu-container { grid-template-columns: repeat(2, 1fr) !important; gap: 1.5rem !important; }
-            .menu-card { padding: 1.5rem !important; }
-            .menu-card .h-60 { height: 12rem !important; }
-            .menu-card h4 { font-size: 1.8rem !important; }
-            .menu-card .text-3xl { font-size: 2rem !important; }
-
-            /* Cart Detail */
-            #cart-details { bottom: 10rem !important; }
-            #total-price { font-size: 3.5rem !important; }
-            #checkout-btn { height: 6rem !important; font-size: 2rem !important; }
-
-            /* Step 4: Payment - Fix Overlap */
-            #step-4 .bg-white { width: 92% !important; padding: 3rem 2rem !important; }
-            #step-4 h2 { font-size: 3.5rem !important; margin-bottom: 3rem !important; }
-            #payment-selection { gap: 2rem !important; }
-            #payment-selection button { padding: 3rem 1.5rem !important; min-height: 200px !important; }
-            #payment-selection .text-8xl { font-size: 6rem !important; }
-            #payment-selection .text-3xl { font-size: 2.5rem !important; }
-            
-            #step-4 .flex.justify-between.mb-12.px-10 { 
-                flex-direction: column !important; 
-                align-items: center !important; 
-                gap: 1rem !important;
-                margin-bottom: 3rem !important;
-            }
-            #step-4 .text-3xl.text-gray-500 { font-size: 2.5rem !important; }
-            #final-total { font-size: 5rem !important; line-height: 1 !important; }
-            
-            /* QRIS Container Optimization */
-            #qris-container { 
-                padding: 2rem !important; 
-                margin-bottom: 1.5rem !important; 
-                border-radius: 2.5rem !important;
-            }
-            #qris-qr-wrapper { 
-                padding: 1rem !important; 
-                margin-bottom: 1.5rem !important; 
-                border-radius: 1.5rem !important;
-            }
-            #qris-image { width: 15rem !important; }
-            #qris-container p { font-size: 1.5rem !important; margin-bottom: 1rem !important; }
-            #payment-timer { font-size: 1.5rem !important; margin-bottom: 0.5rem !important; }
-
-            #step-4 button[onclick="nextStep(3)"] { font-size: 2rem !important; padding: 1.5rem 3rem !important; margin-top: 1rem !important; }
-
-            /* Step 5: Success */
-            #step-5 .no-print:first-child .w-64 { width: 12rem !important; height: 12rem !important; font-size: 6rem !important; }
-            #step-5 .no-print:first-child h2 { font-size: 4rem !important; }
-            #step-5 .no-print:first-child p { font-size: 1.8rem !important; }
-            #printable-area { transform: scale(0.9) !important; margin: 1rem auto !important; }
-            #queue-number { font-size: 8rem !important; }
-            #step-5 .flex.gap-6.mt-12.no-print button { padding: 2rem 3rem !important; font-size: 2rem !important; }
-        }
-
-        /* Smartphone Khusus (2400x1080 - 2436x1080) - Landscape */
-        @media (min-width: 2400px) and (max-width: 2436px) and (height: 1080px) and (orientation: landscape) {
-            html { font-size: 20px; }
-            :root { --sidebar-width: 320px; }
-            
-            #menu-container { grid-template-columns: repeat(4, 1fr) !important; gap: 1.2rem !important; }
-            
-            /* Step 4 Landscape Mobile */
-            #step-4 .bg-white { width: 80% !important; max-height: 95vh !important; padding: 2rem !important; }
-            #payment-selection { grid-template-columns: repeat(2, 1fr) !important; gap: 1.5rem !important; }
-            #payment-selection button { min-height: 150px !important; padding: 1.5rem !important; }
-            #payment-selection .text-8xl { font-size: 4rem !important; }
-            #final-total { font-size: 3.5rem !important; }
-
-            /* QRIS & Card Container Landscape Mobile */
-            #qris-container, #card-container { 
-                padding: 1.5rem !important; 
-                margin-bottom: 1rem !important; 
-            }
             #qris-qr-wrapper { 
                 padding: 0.8rem !important; 
                 margin-bottom: 1rem !important; 
@@ -704,51 +682,46 @@
                     </button>
                 </div>
 
-                <div class="flex justify-between mb-12 px-10">
-                    <span class="text-3xl text-gray-500 font-bold">Total Pembayaran:</span>
-                    <span class="text-6xl font-black text-red-600" id="final-total">Rp 0</span>
+                <div class="flex flex-col gap-4 mb-8">
+                    <div class="flex justify-between items-center px-4">
+                        <span class="text-2xl text-gray-500 font-bold">Total Pembayaran:</span>
+                        <span class="text-4xl font-black text-red-600" id="final-total">Rp 0</span>
+                    </div>
                 </div>
 
-                <!-- QRIS Container (Hidden by default) -->
-                <div id="qris-container" class="hidden bg-gray-50 p-12 rounded-[4rem] mb-12 border-4 border-dashed border-red-100 animate__animated animate__fadeInUp">
-                    <div id="qris-qr-wrapper" class="bg-white p-6 rounded-3xl shadow-xl inline-block mb-10">
-                        <!-- QR Code will be updated to point to payment_portal.html -->
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=payment_portal.html" id="qris-image" class="w-80 mx-auto rounded-xl">
-                    </div>
-                    <p class="text-2xl font-bold text-gray-400 mb-8 uppercase tracking-widest">Pindai QR Untuk Membayar</p>
-                    <div id="payment-timer" class="text-xl font-bold text-red-500 mb-4 hidden">Menunggu konfirmasi... (60s)</div>
-                    <!-- Tombol konfirmasi dihapus agar otomatis -->
-                </div>
-
-                <!-- Card Container (Hidden by default) -->
-                <div id="card-container" class="hidden bg-gray-50 p-12 rounded-[4rem] mb-12 border-4 border-red-100 animate__animated animate__fadeInUp">
-                    <div class="grid grid-cols-2 gap-8 mb-10 text-left">
-                        <div class="col-span-2">
-                            <label class="block font-black text-2xl mb-4 text-gray-700">Nomor Kartu</label>
-                            <input id="card-number" oninput="validateCardForm()" class="w-full p-8 rounded-3xl border-4 border-gray-100 focus:border-red-600 outline-none text-3xl font-bold transition-all" placeholder="4111 1111 1111 1111" maxlength="19">
+                <div class="payment-summary-wrapper">
+                    <!-- QRIS Container (Hidden by default) -->
+                    <div id="qris-container" class="hidden bg-gray-50 p-6 rounded-[3rem] mb-6 border-4 border-dashed border-red-100 animate__animated animate__fadeInUp">
+                        <div id="qris-qr-wrapper" class="bg-white p-4 rounded-2xl shadow-xl inline-block mb-4">
+                            <!-- QR Code points to payment_portal.html -->
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=payment_portal.html" id="qris-image" class="w-48 mx-auto rounded-xl">
                         </div>
-                        <div class="col-span-2">
-                            <label class="block font-black text-2xl mb-4 text-gray-700">Nama Lengkap Sesuai Kartu</label>
-                            <input id="card-name" oninput="validateCardForm()" class="w-full p-8 rounded-3xl border-4 border-gray-100 focus:border-red-600 outline-none text-3xl font-bold transition-all" placeholder="CONTOH NAMA">
-                        </div>
-                        <div>
-                            <label class="block font-black text-2xl mb-4 text-gray-700">Berlaku Hingga (MM/YY)</label>
-                            <input id="card-exp" oninput="validateCardForm()" class="w-full p-8 rounded-3xl border-4 border-gray-100 focus:border-red-600 outline-none text-3xl font-bold transition-all" placeholder="12/28" maxlength="5">
-                        </div>
-                        <div>
-                            <label class="block font-black text-2xl mb-4 text-gray-700">CVV</label>
-                            <input id="card-cvv" oninput="validateCardForm()" class="w-full p-8 rounded-3xl border-4 border-gray-100 focus:border-red-600 outline-none text-3xl font-bold transition-all" placeholder="123" maxlength="3">
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-center gap-10 mb-10 grayscale opacity-50">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" class="h-12">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" class="h-12">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/ATM_Bersama_logo.svg/1200px-ATM_Bersama_logo.svg.png" class="h-12">
+                        <p class="text-xl font-bold text-gray-400 mb-2 uppercase tracking-widest">Pindai QR Untuk Membayar</p>
+                        <div id="payment-timer" class="text-lg font-bold text-red-500 mb-2 hidden">Menunggu konfirmasi... (60s)</div>
                     </div>
 
-                    <button onclick="payWithCard()" id="card-pay-btn" disabled class="w-full py-10 rounded-[3rem] text-4xl font-black shadow-2xl bg-gray-300 text-gray-500 cursor-not-allowed transition-all">BAYAR DENGAN KARTU</button>
-                    <p id="card-error" class="mt-4 text-red-500 font-bold text-xl hidden">Silakan lengkapi semua data kartu di atas</p>
+                    <!-- Card Container (Hidden by default) -->
+                    <div id="card-container" class="hidden bg-gray-50 p-6 rounded-[3rem] mb-6 border-4 border-red-100 animate__animated animate__fadeInUp">
+                        <div class="grid grid-cols-2 gap-4 mb-6 text-left">
+                            <div class="col-span-2">
+                                <label class="block font-black text-xl mb-2 text-gray-700">Nomor Kartu</label>
+                                <input id="card-number" oninput="validateCardForm()" class="w-full p-4 rounded-2xl border-2 border-gray-100 focus:border-red-600 outline-none text-2xl font-bold transition-all" placeholder="4111 1111 1111 1111" maxlength="19">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block font-black text-xl mb-2 text-gray-700">Nama Lengkap</label>
+                                <input id="card-name" oninput="validateCardForm()" class="w-full p-4 rounded-2xl border-2 border-gray-100 focus:border-red-600 outline-none text-2xl font-bold transition-all" placeholder="CONTOH NAMA">
+                            </div>
+                            <div>
+                                <label class="block font-black text-lg mb-2 text-gray-700">MM/YY</label>
+                                <input id="card-exp" oninput="validateCardForm()" class="w-full p-4 rounded-2xl border-2 border-gray-100 focus:border-red-600 outline-none text-2xl font-bold transition-all" placeholder="12/28" maxlength="5">
+                            </div>
+                            <div>
+                                <label class="block font-black text-lg mb-2 text-gray-700">CVV</label>
+                                <input id="card-cvv" oninput="validateCardForm()" class="w-full p-4 rounded-2xl border-2 border-gray-100 focus:border-red-600 outline-none text-2xl font-bold transition-all" placeholder="123" maxlength="3">
+                            </div>
+                        </div>
+                        <button onclick="payWithCard()" id="card-pay-btn" disabled class="w-full py-6 rounded-2xl text-2xl font-black shadow-xl bg-gray-300 text-gray-500 cursor-not-allowed transition-all">BAYAR DENGAN KARTU</button>
+                    </div>
                 </div>
 
                 <button onclick="nextStep(3)" class="flex items-center justify-center gap-4 bg-gray-200 text-gray-900 px-10 py-5 rounded-[2.5rem] text-2xl font-black hover:bg-gray-500 transition-all mt-10 mx-auto">
@@ -1176,6 +1149,13 @@
             document.getElementById('payment-selection').classList.add('hidden');
             document.getElementById('qris-container').classList.toggle('hidden', method !== 'QRIS');
             document.getElementById('card-container').classList.toggle('hidden', method !== 'CARD');
+
+            // Logic tambahan untuk mobile agar ringkas
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                const headerH2 = document.querySelector('#step-4 h2');
+                if (headerH2) headerH2.innerText = method === 'QRIS' ? 'Pembayaran QRIS' : 'Pembayaran Kartu';
+            }
 
             // Reset payment status in localStorage for new session
             localStorage.removeItem('sederhana_payment_status');
