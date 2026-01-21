@@ -31,9 +31,24 @@
     </div>
 
     <script>
-        function confirmPayment() {
-            // Update localStorage to notify KIOSK.html
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('sid');
+
+        async function confirmPayment() {
+            // Update localStorage for same-device notification
             localStorage.setItem('sederhana_payment_status', 'completed');
+            
+            // Notify via ntfy.sh for cross-device notification
+            if (sessionId) {
+                try {
+                    await fetch(`https://ntfy.sh/sederhana_payment_${sessionId}`, {
+                        method: 'POST',
+                        body: 'completed'
+                    });
+                } catch (e) {
+                    console.error("Ntfy error:", e);
+                }
+            }
             
             // UI Update
             document.getElementById('pay-button').classList.add('hidden');
