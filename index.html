@@ -323,8 +323,8 @@
             html { font-size: 20px; }
         }
 
-        /* Smartphone Khusus (1080x2436) - Portrait */
-        @media (width: 1080px) and (height: 2436px) and (orientation: portrait) {
+        /* Smartphone Khusus (1080x2400 - 1080x2436) - Portrait */
+        @media (width: 1080px) and (min-height: 2400px) and (max-height: 2436px) and (orientation: portrait) {
             html { font-size: 22px; }
             .kiosk-canvas { max-width: 1080px; }
             
@@ -395,8 +395,8 @@
             #step-5 .flex.gap-6.mt-12.no-print button { padding: 2rem 3rem !important; font-size: 2rem !important; }
         }
 
-        /* Smartphone Khusus (2436x1080) - Landscape */
-        @media (width: 2436px) and (height: 1080px) and (orientation: landscape) {
+        /* Smartphone Khusus (2400x1080 - 2436x1080) - Landscape */
+        @media (min-width: 2400px) and (max-width: 2436px) and (height: 1080px) and (orientation: landscape) {
             html { font-size: 20px; }
             :root { --sidebar-width: 320px; }
             
