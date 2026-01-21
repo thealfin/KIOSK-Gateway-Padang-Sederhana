@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Pembayaran Sederhana</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-6">
+    <div class="bg-white rounded-[3rem] shadow-2xl p-10 w-full max-w-md text-center animate__animated animate__zoomIn">
+        <img src="https://restoransederhana.id/wp-content/uploads/2018/11/PTSA-LOGO-ADR-4.png" class="h-16 mx-auto mb-8">
+        <h1 class="text-3xl font-black text-gray-800 mb-4">Portal Pembayaran</h1>
+        <p class="text-gray-500 mb-10 text-lg font-medium">Silakan konfirmasi pembayaran Anda untuk pesanan di Sederhana Kiosk.</p>
+        
+        <div id="payment-status" class="hidden mb-10">
+            <div class="w-24 h-24 bg-green-100 text-green-500 rounded-full flex items-center justify-center text-5xl mx-auto mb-4 animate__animated animate__bounceIn">✓</div>
+            <p class="text-2xl font-black text-green-600">Pembayaran Berhasil!</p>
+            <p class="text-gray-400 mt-2">Halaman ini akan tertutup otomatis.</p>
+        </div>
+
+        <button id="pay-button" onclick="confirmPayment()" class="w-full bg-red-600 hover:bg-red-700 text-white py-6 rounded-2xl text-2xl font-black shadow-xl transition-all active:scale-95">
+            BAYAR SEKARANG
+        </button>
+
+        <p class="mt-8 text-gray-400 text-sm">Ini adalah portal pembayaran fiktif untuk keperluan demonstrasi.</p>
+    </div>
+
+    <script>
+        function confirmPayment() {
+            // Update localStorage to notify KIOSK.html
+            localStorage.setItem('sederhana_payment_status', 'completed');
+            
+            // UI Update
+            document.getElementById('pay-button').classList.add('hidden');
+            document.getElementById('payment-status').classList.remove('hidden');
+            
+            // Close window after 2 seconds
+            setTimeout(() => {
+                window.close();
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
