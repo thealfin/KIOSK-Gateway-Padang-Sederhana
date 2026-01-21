@@ -25,7 +25,7 @@
             }
             .kiosk-canvas, #step-5 {
                 position: static !important;
-                width: 58mm !important;
+                width: 100% !important;
                 height: auto !important;
                 padding: 0 !important;
                 margin: 0 !important;
@@ -34,28 +34,49 @@
                 overflow: visible !important;
             }
             #printable-area {
-                width: 58mm !important;
-                max-width: 58mm !important;
-                padding: 2mm !important;
+                width: 55mm !important; /* Adjusted for 55mm Business Card compatibility */
+                max-width: 55mm !important;
+                padding: 1mm !important;
+                margin: 0 auto !important;
                 border: none !important;
                 box-shadow: none !important;
                 font-family: 'Courier New', Courier, monospace !important;
                 color: black !important;
+                text-align: left !important;
+                display: flex !important;
+                flex-direction: column !important;
             }
-            #printable-area h1 { font-size: 14pt !important; text-align: center; font-weight: bold !important; margin-bottom: 2mm !important; }
-            #printable-area h3 { font-size: 32pt !important; text-align: center; font-weight: 900 !important; margin: 4mm 0 !important; }
-            #receipt-items div { font-size: 9pt !important; font-weight: bold !important; }
-            .flex { display: flex !important; justify-content: space-between !important; }
-            .no-print { display: none !important; }
+            /* Header styles */
+            #printable-area .logo-container { text-align: center !important; margin-bottom: 2mm !important; }
+            #printable-area .logo-container img { width: 30mm !important; filter: grayscale(100%) !important; }
+            #printable-area h1 { font-size: 12pt !important; text-align: center !important; font-weight: bold !important; margin: 0 !important; line-height: 1.2 !important; }
+            #printable-area .outlet-info { font-size: 7pt !important; text-align: center !important; margin-bottom: 3mm !important; line-height: 1.1 !important; }
             
-            /* Dashed line replacement for thermal printers */
-            .border-dashed {
-                border-style: dashed !important;
-                border-color: black !important;
-                border-width: 1pt 0 0 0 !important;
-                height: 1px !important;
-                margin: 3mm 0 !important;
-            }
+            /* Order Info styles */
+            #printable-area .order-meta { font-size: 8pt !important; margin-bottom: 3mm !important; }
+            #printable-area .order-meta div { display: flex !important; justify-content: space-between !important; }
+            
+            /* Queue Number style (Big) */
+            #printable-area .queue-section { text-align: center !important; border-top: 1pt dashed black !important; border-bottom: 1pt dashed black !important; padding: 2mm 0 !important; margin: 2mm 0 !important; }
+            #printable-area .queue-label { font-size: 10pt !important; font-weight: bold !important; }
+            #printable-area h3 { font-size: 28pt !important; text-align: center !important; font-weight: 900 !important; margin: 1mm 0 !important; line-height: 1 !important; }
+            
+            /* Item list styles */
+            #receipt-items { width: 100% !important; margin-bottom: 2mm !important; }
+            #receipt-items .item-row { font-size: 8pt !important; margin-bottom: 1mm !important; display: flex !important; flex-direction: column !important; }
+            #receipt-items .item-main { display: flex !important; justify-content: space-between !important; font-weight: bold !important; }
+            #receipt-items .item-sub { display: flex !important; justify-content: flex-start !important; font-size: 7pt !important; color: #555 !important; }
+            
+            /* Total styles */
+            .total-section { border-top: 1pt dashed black !important; padding-top: 2mm !important; margin-top: 2mm !important; }
+            .total-row { display: flex !important; justify-content: space-between !important; font-size: 9pt !important; font-weight: bold !important; margin-bottom: 0.5mm !important; }
+            .total-amount { font-size: 11pt !important; border-top: 1pt solid black !important; margin-top: 1mm !important; padding-top: 1mm !important; }
+
+            /* Footer */
+            #printable-area .footer-msg { text-align: center !important; font-size: 7pt !important; font-style: italic !important; margin-top: 4mm !important; line-height: 1.2 !important; }
+            
+            .no-print { display: none !important; }
+            .flex { display: flex !important; justify-content: space-between !important; }
         }
 
         :root {
@@ -745,35 +766,78 @@
             </div>
             
             <div id="printable-area" class="bg-white p-12 border-4 border-gray-100 w-full max-w-[600px] mx-auto text-black text-left shadow-inner rounded-3xl">
-                <!-- Minimalist Header -->
-                <div class="text-center border-b-4 border-dashed border-black pb-6 mb-6">
-                    <h1 class="text-4xl font-black uppercase mb-2">Restoran Sederhana</h1>
-                    <p class="text-xl uppercase font-bold text-gray-600" id="receipt-date-top"></p>
+                <!-- Momoyo Style Header -->
+                <div class="logo-container">
+                    <img src="https://restoransederhana.id/wp-content/uploads/2018/11/PTSA-LOGO-ADR-4.png" class="mx-auto">
+                </div>
+                <h1 class="uppercase">Restoran Sederhana</h1>
+                <div class="outlet-info">
+                    <p>CABANG GATEWAY SIDOARJO</p>
+                    <p>Jl. Raya Gateway No. 1, Waru, Sidoarjo</p>
+                    <p>Telp: (031) 12345678</p>
                 </div>
 
-                <!-- Items List -->
-                <div id="receipt-items" class="mb-8 text-2xl font-bold space-y-1">
-                    <!-- Items will be injected here -->
-                </div>
-
-                <!-- Total -->
-                <div class="border-t-4 border-dashed border-black pt-6 mb-8">
-                    <div class="flex justify-between text-4xl font-black">
-                        <span>TOTAL</span>
-                        <span id="receipt-total" class="text-red-600">Rp 0</span>
+                <!-- Order Meta -->
+                <div class="order-meta">
+                    <div>
+                        <span>Order Number:</span>
+                        <span id="receipt-order-id">202601210001</span>
+                    </div>
+                    <div>
+                        <span>Print Time:</span>
+                        <span id="receipt-date-top">21-01-2026 18:00</span>
+                    </div>
+                    <div>
+                        <span>Cashier:</span>
+                        <span>Kiosk-Self</span>
+                    </div>
+                    <div>
+                        <span>Sale Channel:</span>
+                        <span id="receipt-order-type">Dine In</span>
                     </div>
                 </div>
 
-                <!-- Queue Number - The Focus -->
-                <div class="text-center mb-6 bg-gray-50 py-8 rounded-[2rem]">
-                    <p class="text-xl font-bold text-gray-400 uppercase mb-2">Nomor Antrean</p>
-                    <h3 class="text-[120px] leading-none font-black text-red-600" id="queue-number">A-000</h3>
+                <!-- Queue Number (Main Focus like Momoyo) -->
+                <div class="queue-section">
+                    <div class="queue-label">Nomor Antrean</div>
+                    <h3 id="queue-number">A-000</h3>
                 </div>
 
-                <!-- Footer -->
-                <div class="text-center text-xl font-bold border-t-4 border-dashed border-black pt-6">
-                    <p class="mb-2">Terima Kasih Atas Kunjungan Anda</p>
-                    <p id="receipt-method" class="text-gray-400 uppercase tracking-widest">METODE: QRIS</p>
+                <!-- Product List Header -->
+                <div class="flex justify-between border-b border-dashed border-black pb-1 mb-2 text-xs font-bold uppercase">
+                    <span>Product Name</span>
+                    <div class="flex gap-4">
+                        <span>Qty</span>
+                        <span>Total</span>
+                    </div>
+                </div>
+
+                <!-- Items List -->
+                <div id="receipt-items" class="space-y-2">
+                    <!-- Items will be injected here -->
+                </div>
+
+                <!-- Payment Summary -->
+                <div class="total-section">
+                    <div class="total-row">
+                        <span>Total Amount:</span>
+                        <span id="receipt-subtotal">Rp 0</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Payment Method:</span>
+                        <span id="receipt-method">QRIS</span>
+                    </div>
+                    <div class="total-row total-amount">
+                        <span>Payable Amount:</span>
+                        <span id="receipt-total">Rp 0</span>
+                    </div>
+                </div>
+
+                <!-- Sweet Footer Message -->
+                <div class="footer-msg">
+                    <p>Uni & Uda terlihat sangat serasi hari ini!</p>
+                    <p>Terima kasih telah berbagi momen manis di Sederhana.</p>
+                    <p>Rasa Sederhana, Kenangan Istimewa. ✨</p>
                 </div>
             </div>
 
@@ -1271,11 +1335,19 @@
             state.queue = q;
             document.getElementById('queue-number').innerText = q;
             
-            // Set Receipt Date
+            // Set Order Meta Info
             const now = new Date();
-            const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + 
-                            now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('receipt-date-top').innerText = dateStr;
+            const orderId = now.getFullYear().toString() + 
+                            (now.getMonth() + 1).toString().padStart(2, '0') + 
+                            now.getDate().toString().padStart(2, '0') + 
+                            Math.floor(1000 + Math.random() * 9000);
+            
+            const timeStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + 
+                            now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            document.getElementById('receipt-order-id').innerText = orderId;
+            document.getElementById('receipt-date-top').innerText = timeStr;
+            document.getElementById('receipt-order-type').innerText = document.getElementById('display-order-type').innerText;
             
             // Render Items for Receipt (Grouped)
             const itemsWrap = document.getElementById('receipt-items');
@@ -1291,34 +1363,25 @@
 
             Object.values(groupedReceipt).forEach(ci => {
                  const row = document.createElement('div');
-                 row.className = 'flex flex-col mb-2 border-b border-gray-50 pb-1';
+                 row.className = 'item-row';
                  
-                 const mainLine = document.createElement('div');
-                 mainLine.className = 'flex justify-between w-full';
-                 
-                 if (ci.qty > 1) {
-                     mainLine.innerHTML = `
-                         <span class="flex-1">${ci.qty}x ${ci.name}</span>
-                         <span class="ml-2">${formatIDR(ci.price * ci.qty)}</span>
-                     `;
-                     row.appendChild(mainLine);
-                     
-                     const subLine = document.createElement('div');
-                     subLine.className = 'text-xs text-gray-400';
-                     subLine.innerText = `@ ${formatIDR(ci.price)}`;
-                     row.appendChild(subLine);
-                 } else {
-                     mainLine.innerHTML = `
-                         <span class="flex-1">${ci.name}</span>
-                         <span class="ml-2">${formatIDR(ci.price)}</span>
-                     `;
-                     row.appendChild(mainLine);
-                 }
+                 row.innerHTML = `
+                    <div class="item-main">
+                        <span>${ci.name}</span>
+                        <div class="flex gap-4">
+                            <span>${ci.qty}</span>
+                            <span>${formatIDR(ci.price * ci.qty)}</span>
+                        </div>
+                    </div>
+                    ${ci.qty > 1 ? `<div class="item-sub"><span>@ ${formatIDR(ci.price)}</span></div>` : ''}
+                 `;
                  itemsWrap.appendChild(row);
              });
 
+            document.getElementById('receipt-subtotal').innerText = formatIDR(state.total);
+            document.getElementById('receipt-method').innerText = method;
             document.getElementById('receipt-total').innerText = formatIDR(state.total);
-            document.getElementById('receipt-method').innerText = 'METODE: ' + (method === 'QRIS' ? 'QRIS' : 'KARTU');
+            
             nextStep(5);
         }
 
