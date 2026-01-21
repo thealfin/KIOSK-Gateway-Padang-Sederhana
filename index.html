@@ -19,9 +19,19 @@
                 display: none !important;
             }
             /* Show only the printable area and its ancestors (as containers) */
-            body, .kiosk-canvas, #step-5, #printable-area, #printable-area * {
+            body, .kiosk-canvas, #step-5, #printable-area {
                 display: block !important;
                 visibility: visible !important;
+            }
+            #printable-area * {
+                visibility: visible !important;
+            }
+            /* Explicitly hide no-print elements and ensure it wins */
+            .no-print, .no-print * {
+                display: none !important;
+                visibility: hidden !important;
+                height: 0 !important;
+                overflow: hidden !important;
             }
             .kiosk-canvas, #step-5 {
                 position: static !important;
@@ -75,8 +85,8 @@
             /* Footer */
             #printable-area .footer-msg { text-align: center !important; font-size: 7pt !important; font-style: italic !important; margin-top: 4mm !important; line-height: 1.2 !important; }
             
-            .no-print { display: none !important; }
             .flex { display: flex !important; justify-content: space-between !important; }
+            .no-print { display: none !important; }
         }
 
         :root {
