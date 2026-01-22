@@ -11,15 +11,18 @@
     <style>
         @media print {
             @page {
-                size: 48mm 210mm; /* Sesuai pengaturan printer Uni/Uda */
-                margin: 0;
+                size: 48mm auto; /* Paksa ke 48mm sesuai preview Chrome */
+                margin: 0 !important;
+            }
+            *, *:before, *:after {
+                box-sizing: border-box !important;
             }
             html, body {
                 margin: 0 !important;
                 padding: 0 !important;
-                width: 48mm !important;
-                height: 210mm !important;
-                overflow: hidden !important;
+                width: 48mm !important; /* Gunakan 48mm agar pas dengan preview */
+                height: auto !important;
+                overflow: visible !important;
                 background: white !important;
                 -webkit-print-color-adjust: exact;
             }
@@ -31,14 +34,13 @@
             .kiosk-canvas {
                 display: block !important;
                 visibility: visible !important;
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 48mm !important;
+                position: static !important; /* Ganti dari absolute ke static */
+                width: 100% !important;
                 height: auto !important;
-                min-height: 210mm !important;
                 background: white !important;
                 box-shadow: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
             .kiosk-canvas > * {
                 display: none !important;
@@ -46,9 +48,11 @@
             #step-5 {
                 display: block !important;
                 visibility: visible !important;
-                width: 48mm !important;
+                width: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
+                border: none !important;
+                background: white !important;
             }
             #step-5 > * {
                 display: none !important;
@@ -56,55 +60,67 @@
             #printable-area {
                 display: block !important;
                 visibility: visible !important;
-                width: 48mm !important;
+                width: 100% !important;
                 margin: 0 !important;
-                padding: 0 !important; /* Hilangkan padding luar agar benar-benar fit ke tepi jika perlu */
+                padding: 0 !important; /* Hilangkan padding agar mepet ke pinggir 48mm */
                 background: white !important;
                 font-family: Arial, Helvetica, sans-serif !important;
                 color: black !important;
                 font-weight: 700 !important;
+                border: none !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
             }
-            /* Pastikan kontainer struk mengambil lebar penuh */
-            .receipt-container {
-                width: 100% !important;
-                padding: 1mm !important; /* Beri sedikit margin aman di dalam */
-                box-sizing: border-box !important;
-            }
-            /* Pastikan semua elemen di dalam struk terlihat */
+            /* Pastikan semua elemen di dalam struk mengambil lebar penuh */
             #printable-area * {
-                display: block !important;
-                visibility: visible !important;
                 color: black !important;
                 font-weight: 700 !important;
             }
-            /* Kembalikan flex untuk baris rincian */
+            /* Kembalikan flex untuk baris rincian agar harga di kanan */
             #printable-area .flex, 
             #printable-area .order-meta div,
             #printable-area .item-main,
-            #printable-area .total-row {
+            #printable-area .total-row,
+            #printable-area .product-header {
                 display: flex !important;
                 flex-direction: row !important;
                 justify-content: space-between !important;
+                align-items: flex-start !important;
                 width: 100% !important;
+                gap: 0 !important;
+                padding-left: 1mm !important; /* Margin teks minimal agar tidak terpotong */
+                padding-right: 1mm !important;
+            }
+            /* Force block elements that should be full width */
+            #printable-area .queue-section,
+            #printable-area .total-section,
+            #printable-area .footer-msg,
+            #printable-area .outlet-info,
+            #printable-area h1,
+            #printable-area .logo-container {
+                display: block !important;
+                width: 100% !important;
+                text-align: center !important;
             }
             /* Logo */
             #printable-area img {
-                width: 25mm !important;
-                margin: 0 auto 2mm auto !important;
-                filter: grayscale(1) contrast(200%) !important; /* Tingkatkan kontras logo */
+                width: 42mm !important; /* Perbesar logo hampir memenuhi 48mm */
+                max-width: 95% !important;
+                margin: 0 auto 4mm auto !important;
+                filter: grayscale(1) contrast(200%) !important;
             }
-            /* Teks */
-            #printable-area h1 { font-size: 12pt !important; font-weight: 800 !important; text-align: center !important; }
-            #printable-area .outlet-info { font-size: 8pt !important; text-align: center !important; margin-bottom: 2mm !important; }
-            #printable-area .order-meta { font-size: 8pt !important; margin-bottom: 2mm !important; }
-            #printable-area .queue-section { text-align: center !important; border-top: 1pt solid black !important; border-bottom: 1pt solid black !important; padding: 2mm 0 !important; margin: 2mm 0 !important; }
-            #printable-area .queue-label { font-size: 10pt !important; font-weight: 800 !important; }
-            #printable-area h3 { font-size: 26pt !important; font-weight: 900 !important; margin: 0 !important; }
-            #receipt-items { font-size: 8pt !important; }
-            .total-section { border-top: 1pt dashed black !important; margin-top: 2mm !important; padding-top: 1mm !important; }
-            .total-row { font-size: 9pt !important; }
-            .total-amount { font-size: 11pt !important; font-weight: 900 !important; border-top: 1.5pt solid black !important; margin-top: 1mm !important; padding-top: 1mm !important; }
-            .footer-msg { font-size: 7pt !important; text-align: center !important; margin-top: 4mm !important; font-weight: 600 !important; }
+            /* Teks diperbesar signifikan agar memenuhi lebar */
+            #printable-area h1 { font-size: 16pt !important; font-weight: 800 !important; margin-bottom: 2mm !important; }
+            #printable-area .outlet-info { font-size: 10pt !important; margin-bottom: 4mm !important; line-height: 1.4 !important; }
+            #printable-area .order-meta { font-size: 10pt !important; margin-bottom: 4mm !important; }
+            #printable-area .queue-section { border-top: 2.5pt solid black !important; border-bottom: 2.5pt solid black !important; padding: 5mm 0 !important; margin: 5mm 0 !important; }
+            #printable-area .queue-label { font-size: 14pt !important; }
+            #printable-area h3 { font-size: 42pt !important; font-weight: 900 !important; margin: 0 !important; }
+            #receipt-items { font-size: 10pt !important; }
+            .total-section { border-top: 2.5pt dashed black !important; margin-top: 5mm !important; padding-top: 4mm !important; }
+            .total-row { font-size: 11pt !important; }
+            .total-amount { font-size: 16pt !important; font-weight: 900 !important; border-top: 3pt solid black !important; margin-top: 4mm !important; padding-top: 4mm !important; }
+            .footer-msg { font-size: 10pt !important; margin-top: 8mm !important; font-weight: 700 !important; line-height: 1.4 !important; }
         }
 
         :root {
@@ -793,7 +809,7 @@
                 <p class="text-3xl text-gray-400 mb-8 font-bold leading-relaxed">Pesanan Anda sedang kami <br> siapkan dengan cinta.</p>
             </div>
             
-            <div id="printable-area" class="bg-white p-12 border-4 border-gray-100 w-full max-w-[600px] mx-auto text-black text-left shadow-inner rounded-3xl">
+            <div id="printable-area" class="bg-white p-6 md:p-12 border-4 border-gray-100 w-full max-w-[600px] mx-auto text-black text-left shadow-2xl rounded-[3rem]">
                 <!-- Momoyo Style Header -->
                 <div class="logo-container">
                     <img src="https://restoransederhana.id/wp-content/uploads/2018/11/PTSA-LOGO-ADR-4.png" class="mx-auto">
@@ -832,12 +848,9 @@
                 </div>
 
                 <!-- Product List Header -->
-                <div class="flex justify-between border-b border-dashed border-black pb-1 mb-2 text-xs font-bold uppercase">
-                    <span>Product Name</span>
-                    <div class="flex gap-4">
-                        <span>Qty</span>
-                        <span>Total</span>
-                    </div>
+                <div class="product-header flex justify-between border-b border-dashed border-black pb-1 mb-2 text-[10pt] font-bold uppercase">
+                    <span>PRODUCT QTY</span>
+                    <span>TOTAL</span>
                 </div>
 
                 <!-- Items List -->
@@ -1391,17 +1404,19 @@
 
             Object.values(groupedReceipt).forEach(ci => {
                  const row = document.createElement('div');
-                 row.className = 'item-row';
+                 row.className = 'item-row mb-2 border-b border-gray-100 border-dashed pb-1';
                  
                  row.innerHTML = `
-                    <div class="item-main">
-                        <span>${ci.name}</span>
-                        <div class="flex gap-4">
-                            <span>${ci.qty}</span>
+                    <div class="item-main flex justify-between items-start w-full">
+                        <div class="flex flex-col">
+                            <span class="font-bold">${ci.name}</span>
+                            ${ci.qty > 1 ? `<span class="text-[10pt] font-normal italic">@ ${formatIDR(ci.price)}</span>` : ''}
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span>${ci.qty} x</span>
                             <span>${formatIDR(ci.price * ci.qty)}</span>
                         </div>
                     </div>
-                    ${ci.qty > 1 ? `<div class="item-sub"><span>@ ${formatIDR(ci.price)}</span></div>` : ''}
                  `;
                  itemsWrap.appendChild(row);
              });
