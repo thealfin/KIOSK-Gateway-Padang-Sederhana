@@ -14,26 +14,18 @@
                 size: 58mm auto;
                 margin: 0;
             }
-            /* Hide everything by default */
-            body * {
+
+            /* Surgical Hide: Only hide direct children that are not part of the receipt path */
+            body > *:not(.kiosk-canvas),
+            .kiosk-canvas > *:not(#step-5),
+            #step-5 > *:not(#printable-area) {
                 display: none !important;
             }
-            /* Show only the printable area and its ancestors (as containers) */
-            body, .kiosk-canvas, #step-5, #printable-area {
+
+            /* Ensure containers are visible and reset their styles for printing */
+            body, .kiosk-canvas, #step-5 {
                 display: block !important;
                 visibility: visible !important;
-            }
-            #printable-area * {
-                visibility: visible !important;
-            }
-            /* Explicitly hide no-print elements and ensure it wins */
-            .no-print, .no-print * {
-                display: none !important;
-                visibility: hidden !important;
-                height: 0 !important;
-                overflow: hidden !important;
-            }
-            .kiosk-canvas, #step-5 {
                 position: static !important;
                 width: 100% !important;
                 height: auto !important;
@@ -43,8 +35,13 @@
                 box-shadow: none !important;
                 overflow: visible !important;
             }
+
+            /* The Receipt Container */
             #printable-area {
-                width: 55mm !important; /* Adjusted for 55mm Business Card compatibility */
+                display: flex !important;
+                flex-direction: column !important;
+                visibility: visible !important;
+                width: 55mm !important;
                 max-width: 55mm !important;
                 padding: 1mm !important;
                 margin: 0 auto !important;
@@ -53,39 +50,41 @@
                 font-family: 'Courier New', Courier, monospace !important;
                 color: black !important;
                 text-align: left !important;
-                display: flex !important;
-                flex-direction: column !important;
             }
+
             /* Header styles */
             #printable-area .logo-container { text-align: center !important; margin-bottom: 2mm !important; }
-            #printable-area .logo-container img { width: 30mm !important; filter: grayscale(100%) !important; }
-            #printable-area h1 { font-size: 12pt !important; text-align: center !important; font-weight: bold !important; margin: 0 !important; line-height: 1.2 !important; }
-            #printable-area .outlet-info { font-size: 7pt !important; text-align: center !important; margin-bottom: 3mm !important; line-height: 1.1 !important; }
+            #printable-area .logo-container img { width: 30mm !important; filter: grayscale(100%) !important; display: block !important; margin: 0 auto !important; }
+            #printable-area h1 { font-size: 12pt !important; text-align: center !important; font-weight: bold !important; margin: 0 !important; line-height: 1.2 !important; display: block !important; }
+            #printable-area .outlet-info { font-size: 7pt !important; text-align: center !important; margin-bottom: 3mm !important; line-height: 1.1 !important; display: block !important; }
             
             /* Order Info styles */
-            #printable-area .order-meta { font-size: 8pt !important; margin-bottom: 3mm !important; }
-            #printable-area .order-meta div { display: flex !important; justify-content: space-between !important; }
+            #printable-area .order-meta { font-size: 8pt !important; margin-bottom: 3mm !important; display: block !important; }
+            #printable-area .order-meta div { display: flex !important; justify-content: space-between !important; width: 100% !important; }
             
             /* Queue Number style (Big) */
-            #printable-area .queue-section { text-align: center !important; border-top: 1pt dashed black !important; border-bottom: 1pt dashed black !important; padding: 2mm 0 !important; margin: 2mm 0 !important; }
-            #printable-area .queue-label { font-size: 10pt !important; font-weight: bold !important; }
-            #printable-area h3 { font-size: 28pt !important; text-align: center !important; font-weight: 900 !important; margin: 1mm 0 !important; line-height: 1 !important; }
+            #printable-area .queue-section { text-align: center !important; border-top: 1pt dashed black !important; border-bottom: 1pt dashed black !important; padding: 2mm 0 !important; margin: 2mm 0 !important; display: block !important; }
+            #printable-area .queue-label { font-size: 10pt !important; font-weight: bold !important; display: block !important; }
+            #printable-area h3 { font-size: 28pt !important; text-align: center !important; font-weight: 900 !important; margin: 1mm 0 !important; line-height: 1 !important; display: block !important; }
             
             /* Item list styles */
-            #receipt-items { width: 100% !important; margin-bottom: 2mm !important; }
-            #receipt-items .item-row { font-size: 8pt !important; margin-bottom: 1mm !important; display: flex !important; flex-direction: column !important; }
-            #receipt-items .item-main { display: flex !important; justify-content: space-between !important; font-weight: bold !important; }
-            #receipt-items .item-sub { display: flex !important; justify-content: flex-start !important; font-size: 7pt !important; color: #555 !important; }
+            #receipt-items { width: 100% !important; margin-bottom: 2mm !important; display: block !important; }
+            #receipt-items .item-row { font-size: 8pt !important; margin-bottom: 1mm !important; display: flex !important; flex-direction: column !important; width: 100% !important; }
+            #receipt-items .item-main { display: flex !important; justify-content: space-between !important; font-weight: bold !important; width: 100% !important; }
+            #receipt-items .item-sub { display: flex !important; justify-content: flex-start !important; font-size: 7pt !important; color: #555 !important; width: 100% !important; }
             
             /* Total styles */
-            .total-section { border-top: 1pt dashed black !important; padding-top: 2mm !important; margin-top: 2mm !important; }
-            .total-row { display: flex !important; justify-content: space-between !important; font-size: 9pt !important; font-weight: bold !important; margin-bottom: 0.5mm !important; }
-            .total-amount { font-size: 11pt !important; border-top: 1pt solid black !important; margin-top: 1mm !important; padding-top: 1mm !important; }
+            .total-section { border-top: 1pt dashed black !important; padding-top: 2mm !important; margin-top: 2mm !important; display: block !important; }
+            .total-row { display: flex !important; justify-content: space-between !important; font-size: 9pt !important; font-weight: bold !important; margin-bottom: 0.5mm !important; width: 100% !important; }
+            .total-amount { font-size: 11pt !important; border-top: 1pt solid black !important; margin-top: 1mm !important; padding-top: 1mm !important; display: flex !important; }
 
             /* Footer */
-            #printable-area .footer-msg { text-align: center !important; font-size: 7pt !important; font-style: italic !important; margin-top: 4mm !important; line-height: 1.2 !important; }
+            #printable-area .footer-msg { text-align: center !important; font-size: 7pt !important; font-style: italic !important; margin-top: 4mm !important; line-height: 1.2 !important; display: block !important; }
             
-            .flex { display: flex !important; justify-content: space-between !important; }
+            /* Helper for flex alignment in print */
+            .flex-print { display: flex !important; justify-content: space-between !important; width: 100% !important; }
+            
+            /* Explicitly hide no-print */
             .no-print { display: none !important; }
         }
 
