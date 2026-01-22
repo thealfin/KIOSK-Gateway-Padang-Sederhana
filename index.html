@@ -59,14 +59,16 @@
                 margin: 0 !important;
                 padding: 2mm !important;
                 background: white !important;
-                font-family: 'Courier New', Courier, monospace !important;
+                font-family: Arial, Helvetica, sans-serif !important; /* Ganti ke sans-serif agar lebih tebal */
                 color: black !important;
+                font-weight: 700 !important; /* Tebalkan seluruh struk */
             }
             /* Pastikan semua elemen di dalam struk terlihat */
             #printable-area * {
                 display: block !important;
                 visibility: visible !important;
                 color: black !important;
+                font-weight: 700 !important;
             }
             /* Kembalikan flex untuk baris rincian */
             #printable-area .flex, 
@@ -82,20 +84,20 @@
             #printable-area img {
                 width: 25mm !important;
                 margin: 0 auto 2mm auto !important;
-                filter: grayscale(1) !important;
+                filter: grayscale(1) contrast(200%) !important; /* Tingkatkan kontras logo */
             }
             /* Teks */
-            #printable-area h1 { font-size: 11pt !important; font-weight: bold !important; text-align: center !important; }
-            #printable-area .outlet-info { font-size: 7pt !important; text-align: center !important; margin-bottom: 2mm !important; }
-            #printable-area .order-meta { font-size: 7pt !important; margin-bottom: 2mm !important; }
-            #printable-area .queue-section { text-align: center !important; border-top: 0.5pt dashed black !important; border-bottom: 0.5pt dashed black !important; padding: 1mm 0 !important; margin: 2mm 0 !important; }
-            #printable-area .queue-label { font-size: 9pt !important; }
-            #printable-area h3 { font-size: 22pt !important; font-weight: 900 !important; margin: 0 !important; }
-            #receipt-items { font-size: 7pt !important; }
-            .total-section { border-top: 0.5pt dashed black !important; margin-top: 2mm !important; padding-top: 1mm !important; }
-            .total-row { font-size: 8pt !important; }
-            .total-amount { font-size: 10pt !important; font-weight: bold !important; border-top: 0.5pt solid black !important; margin-top: 1mm !important; padding-top: 1mm !important; }
-            .footer-msg { font-size: 6pt !important; text-align: center !important; margin-top: 3mm !important; }
+            #printable-area h1 { font-size: 12pt !important; font-weight: 800 !important; text-align: center !important; }
+            #printable-area .outlet-info { font-size: 8pt !important; text-align: center !important; margin-bottom: 2mm !important; }
+            #printable-area .order-meta { font-size: 8pt !important; margin-bottom: 2mm !important; }
+            #printable-area .queue-section { text-align: center !important; border-top: 1pt solid black !important; border-bottom: 1pt solid black !important; padding: 2mm 0 !important; margin: 2mm 0 !important; }
+            #printable-area .queue-label { font-size: 10pt !important; font-weight: 800 !important; }
+            #printable-area h3 { font-size: 26pt !important; font-weight: 900 !important; margin: 0 !important; }
+            #receipt-items { font-size: 8pt !important; }
+            .total-section { border-top: 1pt dashed black !important; margin-top: 2mm !important; padding-top: 1mm !important; }
+            .total-row { font-size: 9pt !important; }
+            .total-amount { font-size: 11pt !important; font-weight: 900 !important; border-top: 1.5pt solid black !important; margin-top: 1mm !important; padding-top: 1mm !important; }
+            .footer-msg { font-size: 7pt !important; text-align: center !important; margin-top: 4mm !important; font-weight: 600 !important; }
         }
 
         :root {
