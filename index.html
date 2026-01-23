@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         @media print {
@@ -1386,44 +1387,65 @@
             const timeStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + 
                             now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             
-            document.getElementById('receipt-order-id').innerText = orderId;
-            document.getElementById('receipt-date-top').innerText = timeStr;
-            document.getElementById('receipt-order-type').innerText = document.getElementById('display-order-type').innerText;
-            
-            // Render Items for Receipt (Grouped)
-            const itemsWrap = document.getElementById('receipt-items');
-            itemsWrap.innerHTML = '';
-            
-            const groupedReceipt = state.cart.reduce((acc, item) => {
-                if (!acc[item.id]) {
-                    acc[item.id] = { ...item, qty: 0 };
-                }
-                acc[item.id].qty++;
-                return acc;
-            }, {});
+            // Prepare Data for QR/Monitoring
+            const subtotal = state.total;
+            const tax = subtotal * 0.1;
+            const service = 5000;
+            const grandTotal = subtotal + tax + service;
 
-            Object.values(groupedReceipt).forEach(ci => {
-                 const row = document.createElement('div');
-                 row.className = 'item-row mb-2 border-b border-gray-100 border-dashed pb-1';
-                 
-                 row.innerHTML = `
-                    <div class="item-main flex justify-between items-start w-full">
-                        <div class="flex flex-col">
-                            <span class="font-bold">${ci.name}</span>
-                            ${ci.qty > 1 ? `<span class="text-[8pt] font-normal italic">@ ${formatIDR(ci.price)}</span>` : ''}
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <span>${ci.qty} x</span>
-                            <span>${formatIDR(ci.price * ci.qty)}</span>
-                        </div>
-                    </div>
-                 `;
-                 itemsWrap.appendChild(row);
-             });
+            const orderData = {
+                id: orderId,
+                queue: q,
+                date: timeStr,
+                type: document.getElementById('display-order-type').innerText,
+                items: state.cart,
+                subtotal: subtotal,
+                tax: tax,
+                service: service,
+                grandTotal: grandTotal,
+                status: 'Diterima' // Default status
+            };
 
-            document.getElementById('receipt-subtotal').innerText = formatIDR(state.total);
-            document.getElementById('receipt-method').innerText = method;
-            document.getElementById('receipt-total').innerText = formatIDR(state.total);
+            // Encode for URL
+            const jsonStr = JSON.stringify(orderData);
+            const encodedData = encodeURIComponent(jsonStr);
+            const targetUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1) + 'monitoring.html?data=' + encodedData;
+
+            // Render QR Code Section in Printable Area
+            const printableArea = document.getElementById('printable-area');
+            printableArea.innerHTML = `
+                <div class="logo-container">
+                    <img src="https://restoransederhana.id/wp-content/uploads/2018/11/PTSA-LOGO-ADR-4.png" class="mx-auto" style="width: 35mm !important; filter: grayscale(1) contrast(200%) !important;">
+                </div>
+                <h1 class="uppercase text-center text-xl font-bold mt-2" style="font-size: 14pt !important; font-weight: 800 !important; margin-bottom: 1mm !important;">Restoran Sederhana</h1>
+                <div class="outlet-info text-center" style="font-size: 9pt !important; margin-bottom: 3mm !important; line-height: 1.4 !important;">
+                    <p>CABANG GATEWAY SIDOARJO</p>
+                </div>
+                <div class="queue-section text-center my-4 border-y-2 border-black py-4" style="border-top: 2pt solid black !important; border-bottom: 2pt solid black !important; padding: 3mm 0 !important; margin: 3mm 0 !important;">
+                    <div class="queue-label text-lg" style="font-size: 12pt !important;">Nomor Antrean</div>
+                    <h3 class="text-6xl font-black my-2" style="font-size: 32pt !important; font-weight: 900 !important; margin: 0 !important; white-space: nowrap !important;">${q}</h3>
+                </div>
+                <div class="text-center mb-4" style="font-size: 10pt !important;">
+                    <p class="font-bold">Scan QR Code ini untuk</p>
+                    <p>memantau status pesanan</p>
+                </div>
+                <div id="qrcode" class="flex justify-center mb-4" style="display: flex; justify-content: center; margin-bottom: 4mm;"></div>
+                <div class="footer-msg text-center text-xs mt-4" style="font-size: 8pt !important; margin-top: 5mm !important; font-weight: 700 !important; line-height: 1.4 !important;">
+                    <p>Terima kasih telah memesan!</p>
+                    <p>Mohon menunggu panggilan.</p>
+                </div>
+            `;
+
+            // Generate QR Code
+            // Clear previous QR if any (though innerHTML cleared it)
+            new QRCode(document.getElementById("qrcode"), {
+                text: targetUrl,
+                width: 128,
+                height: 128,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.L
+            });
             
             nextStep(5);
         }
