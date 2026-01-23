@@ -339,19 +339,26 @@
                 items.forEach(item => {
                     const el = document.createElement('div');
                     
+                    // Support both old structure (item.img) and compact structure (item.m)
+                    const img = item.m || item.img || item.image;
+                    const encodedImg = img ? encodeURI(img) : '';
+                    const name = item.n || item.name;
+                    const price = item.p || item.price;
+                    const qty = item.q || item.quantity;
+
                     if (isMobile) {
                         // Mobile Layout
                         el.className = 'flex items-start gap-4';
                         el.innerHTML = `
-                            <div class="size-16 rounded-xl bg-center bg-cover shrink-0 shadow-sm border border-gray-100" style="background-image: url('${item.img}')"></div>
+                            <div class="size-16 rounded-xl bg-center bg-cover shrink-0 shadow-sm border border-gray-100" style="background-image: url('${encodedImg}')"></div>
                             <div class="flex-grow min-w-0 pt-0.5">
                                 <div class="flex justify-between items-start mb-1">
-                                    <h4 class="font-bold text-gray-900 text-base truncate pr-2">${item.name}</h4>
-                                    <span class="font-bold text-gray-900">${formatIDR(item.price * item.quantity)}</span>
+                                    <h4 class="font-bold text-gray-900 text-base truncate pr-2">${name}</h4>
+                                    <span class="font-bold text-gray-900">${formatIDR(price * qty)}</span>
                                 </div>
                                 <div class="flex justify-between items-center text-xs">
                                     <p class="text-gray-500 truncate max-w-[150px]">Porsi Standar</p>
-                                    <span class="font-bold text-gray-400 bg-gray-50 px-2 py-0.5 rounded">x${item.quantity}</span>
+                                    <span class="font-bold text-gray-400 bg-gray-50 px-2 py-0.5 rounded">x${qty}</span>
                                 </div>
                             </div>
                         `;
@@ -360,16 +367,16 @@
                         el.className = 'flex justify-between items-start group';
                         el.innerHTML = `
                             <div class="flex gap-4">
-                                <div class="size-16 rounded-xl bg-cover bg-center shrink-0 border border-gray-100 shadow-sm" style="background-image: url('${item.img}');"></div>
+                                <div class="size-16 rounded-xl bg-cover bg-center shrink-0 border border-gray-100 shadow-sm" style="background-image: url('${encodedImg}');"></div>
                                 <div>
-                                    <p class="font-bold text-text-dark text-base">${item.name}</p>
+                                    <p class="font-bold text-text-dark text-base">${name}</p>
                                     <p class="text-[10px] text-gray-400 uppercase tracking-wide font-medium mt-0.5">Porsi Standar</p>
                                     <div class="flex items-center gap-2 mt-2">
-                                        <span class="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-0.5 rounded">x${item.quantity}</span>
+                                        <span class="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-0.5 rounded">x${qty}</span>
                                     </div>
                                 </div>
                             </div>
-                            <p class="font-bold text-base text-text-dark">${formatIDR(item.price * item.quantity)}</p>
+                            <p class="font-bold text-base text-text-dark">${formatIDR(price * qty)}</p>
                         `;
                     }
                     container.appendChild(el);
@@ -380,16 +387,39 @@
         // --- Main Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const encodedData = urlParams.get('data');
+            let orderData = null;
 
-            if (!encodedData) {
-                console.error('No order data found in URL');
-                // Optional: Show placeholder/error state
-                return;
-            }
+            // Support both old 'data' (encoded JSON) and new 'd' (Base64)
+            const encodedData = urlParams.get('data');
+            const base64Data = urlParams.get('d');
 
             try {
-                const orderData = JSON.parse(decodeURIComponent(encodedData));
+                if (base64Data) {
+                    // Decode Base64 UTF-8
+                    const jsonStr = decodeURIComponent(escape(atob(base64Data)));
+                    const compact = JSON.parse(jsonStr);
+                    
+                    // Map compact keys back to original names for easier UI binding
+                    orderData = {
+                        id: compact.i,
+                        queue: compact.q,
+                        date: compact.d,
+                        type: compact.t,
+                        subtotal: compact.s,
+                        tax: compact.x,
+                        service: compact.v,
+                        grandTotal: compact.g,
+                        items: compact.it, // Items are already mapped in index.html
+                        status: 'Diterima'
+                    };
+                } else if (encodedData) {
+                    orderData = JSON.parse(decodeURIComponent(encodedData));
+                }
+
+                if (!orderData) {
+                    console.error('No order data found in URL');
+                    return;
+                }
                 
                 // 1. Bind Text Data (works for both mobile and desktop)
                 setText('.data-queue', orderData.queue);
@@ -401,26 +431,28 @@
                 setText('.data-grand-total', formatIDR(orderData.grandTotal));
                 setText('.data-item-count', orderData.items.length);
 
-                // 2. Group Items
-                const groupedItems = orderData.items.reduce((acc, item) => {
-                    if (!acc[item.id]) {
-                        acc[item.id] = { ...item, quantity: 1 };
-                    } else {
-                        acc[item.id].quantity += 1;
-                    }
-                    return acc;
-                }, {});
-                const itemsArray = Object.values(groupedItems);
+                // 2. Process Items (handling both flat and grouped)
+                // If items already have quantities (from index.html compactData), use them
+                const itemsArray = orderData.items.some(it => it.q || it.quantity) 
+                    ? orderData.items 
+                    : Object.values(orderData.items.reduce((acc, item) => {
+                        const id = item.id || item.n; // fallback to name if no id
+                        if (!acc[id]) {
+                            acc[id] = { ...item, quantity: 1 };
+                        } else {
+                            acc[id].quantity += 1;
+                        }
+                        return acc;
+                    }, {}));
 
                 // 3. Render Items Lists
                 renderItems(itemsArray, '.js-items-list-mobile', true);
                 renderItems(itemsArray, '.js-items-list-desktop', false);
 
                 // 4. Set Initial Status
-                updateStatusUI(orderData.status);
+                updateStatusUI(orderData.status || 'Diterima');
 
                 // 5. Simulation Logic
-                // Simulate updates for demonstration purposes
                 setTimeout(() => updateStatusUI('Disiapkan'), 5000);
                 setTimeout(() => updateStatusUI('Siap'), 15000);
 

@@ -1393,23 +1393,45 @@
             const service = 5000;
             const grandTotal = subtotal + tax + service;
 
-            const orderData = {
-                id: orderId,
-                queue: q,
-                date: timeStr,
-                type: document.getElementById('display-order-type').innerText,
-                items: state.cart,
-                subtotal: subtotal,
-                tax: tax,
-                service: service,
-                grandTotal: grandTotal,
-                status: 'Diterima' // Default status
+            // Group items before encoding to save space
+            const groupedItems = state.cart.reduce((acc, item) => {
+                const existing = acc.find(i => i.id === item.id);
+                if (existing) {
+                    existing.q++;
+                } else {
+                    acc.push({
+                        n: item.name,
+                        p: item.price,
+                        m: item.img,
+                        q: 1,
+                        id: item.id
+                    });
+                }
+                return acc;
+            }, []);
+
+            // Compact structure for shorter URL
+            const compactData = {
+                i: orderId,
+                q: q,
+                d: timeStr,
+                t: document.getElementById('display-order-type').innerText,
+                s: subtotal,
+                x: tax,
+                v: service,
+                g: grandTotal,
+                it: groupedItems.map(item => ({
+                    n: item.n,
+                    p: item.p,
+                    m: item.m,
+                    q: item.q
+                }))
             };
 
-            // Encode for URL
-            const jsonStr = JSON.stringify(orderData);
-            const encodedData = encodeURIComponent(jsonStr);
-            const targetUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1) + 'monitoring.html?data=' + encodedData;
+            // Encode using Base64 for even shorter URL
+            const jsonStr = JSON.stringify(compactData);
+            const base64Data = btoa(unescape(encodeURIComponent(jsonStr)));
+            const targetUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1) + 'monitoring.html?d=' + base64Data;
 
             // Render QR Code Section in Printable Area
             const printableArea = document.getElementById('printable-area');
